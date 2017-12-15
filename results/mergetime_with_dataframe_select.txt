@@ -1,0 +1,6 @@
+This is the result obtained with the Dataframe and Select
+Hello, merging started!
+Start time: Thu Dec 14 15:42:47 EET 2017
+End time: Thu Dec 14 15:53:28 EET 2017
+Elaspsed time (ms): 640378.654983
+*************************************************

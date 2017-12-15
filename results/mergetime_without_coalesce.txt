@@ -1,0 +1,7 @@
+This is the result obtained with your code without coalesce(1)
+
+Hello, merging started!
+Start time: Wed Dec 13 19:15:45 EET 2017
+End time: Wed Dec 13 19:27:09 EET 2017
+Elaspsed time (ms): 684229.927237
+*************************************************

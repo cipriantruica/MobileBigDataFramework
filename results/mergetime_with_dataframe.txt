@@ -1,0 +1,6 @@
+This is the result obtained with the Dataframe
+Hello, merging started!
+Start time: Wed Dec 13 19:38:39 EET 2017
+End time: Wed Dec 13 19:49:48 EET 2017
+Elaspsed time (ms): 668311.259872
+*************************************************

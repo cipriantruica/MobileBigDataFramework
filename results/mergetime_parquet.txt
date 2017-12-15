@@ -1,0 +1,7 @@
+This is the result obtained with Dataframe select andparquet save.
+
+Hello, merging started!
+Start time: Thu Dec 14 21:36:37 EET 2017
+End time: Thu Dec 14 21:49:22 EET 2017
+Elaspsed time (ms): 764796.481488
+*************************************************
