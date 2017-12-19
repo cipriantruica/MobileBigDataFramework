@@ -7,59 +7,58 @@ import org.apache.spark.sql.types._
 import org.apache.spark.{SparkConf, SparkContext}
 
 /*
-    This code uses a Dataframe with select.
-    It compress the output using snappy compression algorithm.
+    It reads all the data from the tcv and computes the edges.
+    It uses a Dataframe with a single select.
     It saves the output as parquet
 */
 
-object OneMergedFileParquet {
+object CreateEdgesSparkSQLTSV_v1 {
   def main(args: Array[String]): Unit = {
         // input directory with the tsv
         val inputDirectory = "hdfs://hadoop-master:8020/user/ciprian/input/MI2MI/MItoMI-2013-11*" 
         // val inputDirectory = args(0)
 
-        // output file - the merged one
-        val outputFile = "hdfs://hadoop-master:8020/user/ciprian/output/MI2MI/parquet" 
+        // output file for edges
+        val outputFile = "hdfs://hadoop-master:8020/user/ciprian/output/MI2MI/edges" 
         // val outputFile = args(1)
 
         // the file with the mearsuments
-        val printFile = "/home/ciprian/mergetime_parquet.txt" 
+        val printFile = "/home/ciprian/runtime_Create_Edges_SparkSQL_TSV_v1.txt" 
         // val printFile = args(2)
 
-        // the tsc schema
+        // the tsv schema
         val fileSchema = StructType(Array(
             StructField("Timestamp", LongType, true),
             StructField("SquareID1", IntegerType, true),
             StructField("SquareID2", IntegerType, true),
             StructField("DIS", DoubleType, true)))
 
-        // Epoch to timestamp
-        val sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-
         // PrintWriter
         import java.io._
         val pw = new PrintWriter(new File(printFile))
 
-        pw.println("Hello, merging started!")
+        pw.println("Create_Edges_SparkSQL_TSV_v1!")
         pw.println("Start time: " + Calendar.getInstance().getTime())
 
         val t0 = System.nanoTime()
 
         // Spark session
-        val spark = SparkSession.builder.appName("Merging").getOrCreate;
+        val spark = SparkSession.builder.appName("Create_Edges_SparkSQL_TSV_v1").getOrCreate;
 
-        
-
+        // read the data from the tsv files
         val df = spark.read.format("csv")
             .option("header", "false")
             .option("delimiter", "\t")
-            // .option("inferSchema", "true") // if you want to auto infer the tsv schema
             .schema(fileSchema)
             .load(inputDirectory)
-        
-        df.select(from_unixtime(df("Timestamp")/1000, "yyyy-MM-dd hh:mm:ss").as("Timestramp"), df("SquareID1"), df("SquareID2"), df("DIS"))
+
+        // create a view to query
+        df.createOrReplaceTempView("mi2mi_table")
+
+        // create the edges and save them to parquet files
+        val sqlEdges = spark.sql("select Timestamp, SID1, SID2, sum(DIS) EdgeCost from (select from_unixtime(Timestamp/1000) Timestamp, SquareID1 SID1, SquareID2 SID2, DIS from mi2mi_table where SquareID1 <= SquareID2 union all select from_unixtime(Timestamp/1000) Timestamp, SquareID2, SquareID1, DIS from mi2mi_table where SquareID1 > SquareID2) group by Timestamp, SID1, SID2 order by Timestamp, SID1, SID2")
             .write
-            .option("codec", "snappy") // if you need compression, use one of bzip2, deflate, uncompressed, lz4, gzip, snappy, none - snappy by deault
+            .option("codec", "snappy")
             .parquet(outputFile)
 
         val t1 = System.nanoTime()
@@ -70,4 +69,3 @@ object OneMergedFileParquet {
         pw.close()
     }
 }
-
