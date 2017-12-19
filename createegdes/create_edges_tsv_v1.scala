@@ -23,7 +23,7 @@ object CreateEdgesSparkSQLTSV_v1 {
         // val outputFile = args(1)
 
         // the file with the mearsuments
-        val printFile = "/home/ciprian/runtime_Create_Edges_SparkSQL_TSV_v1.txt" 
+        val printFile = "./results/runtime_Create_Edges_SparkSQL_TSV_v1.txt"
         // val printFile = args(2)
 
         // the tsv schema
@@ -56,7 +56,7 @@ object CreateEdgesSparkSQLTSV_v1 {
         df.createOrReplaceTempView("mi2mi_table")
 
         // create the edges and save them to parquet files
-        val sqlEdges = spark.sql("select Timestamp, SID1, SID2, sum(DIS) EdgeCost from (select from_unixtime(Timestamp/1000) Timestamp, SquareID1 SID1, SquareID2 SID2, DIS from mi2mi_table where SquareID1 <= SquareID2 union all select from_unixtime(Timestamp/1000) Timestamp, SquareID2, SquareID1, DIS from mi2mi_table where SquareID1 > SquareID2) group by Timestamp, SID1, SID2 order by Timestamp, SID1, SID2")
+        val sqlEdges = spark.sql("select Date, SID1, SID2, sum(DIS) EdgeCost from (select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID1 SID1, SquareID2 SID2, DIS from mi2mi_table where SquareID1 <= SquareID2 union all select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID2, SquareID1, DIS from mi2mi_table where SquareID1 > SquareID2) group by Date, SID1, SID2 order by Date, SID1, SID2")
             .write
             .option("codec", "snappy")
             .parquet(outputFile)

@@ -57,7 +57,7 @@ object CreateEdgesSparkSQLTSV_v2 {
         dfParquet.createOrReplaceTempView("mi2mi_table")
         
         // create the edges and save them to parquet files
-        val sqlEdges = spark.sql("select Timestamp, SID1, SID2, sum(DIS) EdgeCost from (select Timestamp, SquareID1 SID1, SquareID2 SID2, DIS from mi2mi_table where SquareID1 <= SquareID2 union all select Timestamp, SquareID2, SquareID1, DIS from mi2mi_table where SquareID1 > SquareID2) group by Timestamp, SID1, SID2 order by Timestamp, SID1, SID2")
+        val sqlEdges = spark.sql("select Date, SID1, SID2, sum(DIS) EdgeCost from (select cast(Timestamp as Date) Date, SquareID1 SID1, SquareID2 SID2, DIS from mi2mi_table where SquareID1 <= SquareID2 union all select cast(Timestamp as Date) Date, SquareID2, SquareID1, DIS from mi2mi_table where SquareID1 > SquareID2) group by Date, SID1, SID2 order by Date, SID1, SID2")
             .write
             .option("codec", "snappy")
             .parquet(outputFile)
