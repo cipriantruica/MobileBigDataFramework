@@ -27,7 +27,7 @@ object CreateEdgesSparkSQLTSV_v3 {
         val outputFile = "hdfs://hadoop-master:8020/user/ciprian/output/MI2MI/edges" 
         
         // the file with the mearsuments
-        val printFile = "/home/ciprian/runtime_Create_Edges_SparkSQL_TSV_v2.txt"
+        val printFile = "./results/runtime_Create_Edges_SparkSQL_TSV_v2.txt"
 
         // the tsv schema
         val fileSchema = StructType(Array(

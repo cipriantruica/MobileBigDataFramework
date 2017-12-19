@@ -22,7 +22,7 @@ object CreateEdgesSparkSQLParquet {
         // val outputFile = args(1)
 
         // the file with the mearsuments
-        val printFile = "/home/ciprian/runtime_edges_Create_Edges_SparkSQL_Parquet.txt" 
+        val printFile = "./results/runtime_edges_Create_Edges_SparkSQL_Parquet.txt" 
         // val printFile = args(2)
 
         // PrintWriter

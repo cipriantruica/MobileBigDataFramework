@@ -22,7 +22,7 @@ object CreateEdgesSparkSQLTSV_v2 {
         // val outputFile = args(1)
         
         // the file with the mearsuments
-        val printFile = "/home/ciprian/runtime_Create_Edges_SparkSQL_TSV_v2.txt"
+        val printFile = "./results/runtime_Create_Edges_SparkSQL_TSV_v2.txt"
 
         // the tsv schema
         val fileSchema = StructType(Array(
