@@ -1,0 +1,151 @@
+Hello, preprocessing is starting!
+this is day 1
+Start time: Wed Dec 20 17:12:18 EET 2017
+End time: Wed Dec 20 17:14:06 EET 2017
+Elaspsed time (ns): 107957238552
+*************************************************
+this is day 2
+Start time: Wed Dec 20 17:14:06 EET 2017
+End time: Wed Dec 20 17:15:52 EET 2017
+Elaspsed time (ns): 105913988308
+*************************************************
+this is day 3
+Start time: Wed Dec 20 17:15:52 EET 2017
+End time: Wed Dec 20 17:17:27 EET 2017
+Elaspsed time (ns): 95247644391
+*************************************************
+this is day 4
+Start time: Wed Dec 20 17:17:27 EET 2017
+End time: Wed Dec 20 17:20:07 EET 2017
+Elaspsed time (ns): 159662869747
+*************************************************
+this is day 5
+Start time: Wed Dec 20 17:20:07 EET 2017
+End time: Wed Dec 20 17:22:49 EET 2017
+Elaspsed time (ns): 161954571726
+*************************************************
+this is day 6
+Start time: Wed Dec 20 17:22:49 EET 2017
+End time: Wed Dec 20 17:25:28 EET 2017
+Elaspsed time (ns): 159029411424
+*************************************************
+this is day 7
+Start time: Wed Dec 20 17:25:28 EET 2017
+End time: Wed Dec 20 17:28:10 EET 2017
+Elaspsed time (ns): 161854748215
+*************************************************
+this is day 8
+Start time: Wed Dec 20 17:28:10 EET 2017
+End time: Wed Dec 20 17:31:05 EET 2017
+Elaspsed time (ns): 175312416775
+*************************************************
+this is day 9
+Start time: Wed Dec 20 17:31:05 EET 2017
+End time: Wed Dec 20 17:33:05 EET 2017
+Elaspsed time (ns): 119630532272
+*************************************************
+this is day 10
+Start time: Wed Dec 20 17:33:05 EET 2017
+End time: Wed Dec 20 17:34:42 EET 2017
+Elaspsed time (ns): 97331153494
+*************************************************
+this is day 11
+Start time: Wed Dec 20 17:34:42 EET 2017
+End time: Wed Dec 20 17:37:19 EET 2017
+Elaspsed time (ns): 156779351561
+*************************************************
+this is day 12
+Start time: Wed Dec 20 17:37:19 EET 2017
+End time: Wed Dec 20 17:39:55 EET 2017
+Elaspsed time (ns): 156146519570
+*************************************************
+this is day 13
+Start time: Wed Dec 20 17:39:55 EET 2017
+End time: Wed Dec 20 17:42:33 EET 2017
+Elaspsed time (ns): 157762849985
+*************************************************
+this is day 14
+Start time: Wed Dec 20 17:42:33 EET 2017
+End time: Wed Dec 20 17:45:07 EET 2017
+Elaspsed time (ns): 154046569403
+*************************************************
+this is day 15
+Start time: Wed Dec 20 17:45:07 EET 2017
+End time: Wed Dec 20 17:47:50 EET 2017
+Elaspsed time (ns): 162838046024
+*************************************************
+this is day 16
+Start time: Wed Dec 20 17:47:50 EET 2017
+End time: Wed Dec 20 17:49:43 EET 2017
+Elaspsed time (ns): 113905184268
+*************************************************
+this is day 17
+Start time: Wed Dec 20 17:49:43 EET 2017
+End time: Wed Dec 20 17:51:15 EET 2017
+Elaspsed time (ns): 91705922529
+*************************************************
+this is day 18
+Start time: Wed Dec 20 17:51:15 EET 2017
+End time: Wed Dec 20 17:53:51 EET 2017
+Elaspsed time (ns): 156163240805
+*************************************************
+this is day 19
+Start time: Wed Dec 20 17:53:51 EET 2017
+End time: Wed Dec 20 17:56:29 EET 2017
+Elaspsed time (ns): 157246271817
+*************************************************
+this is day 20
+Start time: Wed Dec 20 17:56:29 EET 2017
+End time: Wed Dec 20 17:59:00 EET 2017
+Elaspsed time (ns): 151038215961
+*************************************************
+this is day 21
+Start time: Wed Dec 20 17:59:00 EET 2017
+End time: Wed Dec 20 18:01:34 EET 2017
+Elaspsed time (ns): 154496306942
+*************************************************
+this is day 22
+Start time: Wed Dec 20 18:01:34 EET 2017
+End time: Wed Dec 20 18:04:05 EET 2017
+Elaspsed time (ns): 151029625742
+*************************************************
+this is day 23
+Start time: Wed Dec 20 18:04:05 EET 2017
+End time: Wed Dec 20 18:05:51 EET 2017
+Elaspsed time (ns): 105439470940
+*************************************************
+this is day 24
+Start time: Wed Dec 20 18:05:51 EET 2017
+End time: Wed Dec 20 18:07:19 EET 2017
+Elaspsed time (ns): 88706329738
+*************************************************
+this is day 25
+Start time: Wed Dec 20 18:07:19 EET 2017
+End time: Wed Dec 20 18:09:50 EET 2017
+Elaspsed time (ns): 150271295266
+*************************************************
+this is day 26
+Start time: Wed Dec 20 18:09:50 EET 2017
+End time: Wed Dec 20 18:12:19 EET 2017
+Elaspsed time (ns): 149588408055
+*************************************************
+this is day 27
+Start time: Wed Dec 20 18:12:19 EET 2017
+End time: Wed Dec 20 18:14:48 EET 2017
+Elaspsed time (ns): 149254563501
+*************************************************
+this is day 28
+Start time: Wed Dec 20 18:14:48 EET 2017
+End time: Wed Dec 20 18:17:14 EET 2017
+Elaspsed time (ns): 145179928467
+*************************************************
+this is day 29
+Start time: Wed Dec 20 18:17:14 EET 2017
+End time: Wed Dec 20 18:19:45 EET 2017
+Elaspsed time (ns): 151404752791
+*************************************************
+this is day 30
+Start time: Wed Dec 20 18:19:45 EET 2017
+End time: Wed Dec 20 18:21:33 EET 2017
+Elaspsed time (ns): 107922443528
+*************************************************
