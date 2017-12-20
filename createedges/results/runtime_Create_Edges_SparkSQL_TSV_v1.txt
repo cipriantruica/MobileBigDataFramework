@@ -1,0 +1,5 @@
+Create_Edges_SparkSQL_TSV_v1!
+Start time: Wed Dec 20 18:32:46 EET 2017
+End time: Wed Dec 20 19:13:59 EET 2017
+Elaspsed time (ms): 2473285.352881
+*************************************************
