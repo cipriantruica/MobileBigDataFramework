@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     startTimeTotal = time.time()
 
-    sc = SparkContext(appName="merge")
+    sc = SparkContext(appName="Create Edges")
     spark = SparkSession(sparkContext=sc)
 
     df = spark.read.csv(inputDirectory, header=False, sep='\t', schema=fileSchema)
