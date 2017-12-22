@@ -31,6 +31,6 @@ if __name__ == "__main__":
     sqlEdges.write.format("parquet").save(outputFile)
 
     endTimeTotal = time.time()
-
+    totalTime = endTimeTotal - startTimeTotal
     with open(printFile, 'a') as timeFile:
-        timeFile.write("Total time (seconds):", endTimeTotal - startTimeTotal, '\n')
+        timeFile.write("Total time (seconds): "+ str(endTimeTotal - startTimeTotal) + "\n")
