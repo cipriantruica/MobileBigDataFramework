@@ -1,0 +1,6 @@
+This is merging using dataframes and mapping.
+Hello, merging started!
+Start time: Fri Dec 22 16:05:42 CET 2017
+End time: Fri Dec 22 16:18:38 CET 2017
+Elaspsed time (ms): 775806.358056
+*************************************************

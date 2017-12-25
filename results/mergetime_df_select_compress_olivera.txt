@@ -1,0 +1,6 @@
+This is merging with dataframes, select and compress.
+Hello, merging started!
+Start time: Mon Dec 25 12:50:31 CET 2017
+End time: Mon Dec 25 13:20:55 CET 2017
+Elaspsed time (ms): 1823820.329571
+*************************************************

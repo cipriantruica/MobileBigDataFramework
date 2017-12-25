@@ -1,0 +1,6 @@
+This is merging with dataframes and select.
+Hello, merging started!
+Start time: Mon Dec 25 10:42:33 CET 2017
+End time: Mon Dec 25 10:58:21 CET 2017
+Elaspsed time (ms): 947243.255791
+*************************************************

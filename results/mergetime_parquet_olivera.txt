@@ -1,0 +1,6 @@
+This is merging with output in parquet format.
+Hello, merging started!
+Start time: Mon Dec 25 14:59:54 CET 2017
+End time: Mon Dec 25 15:08:09 CET 2017
+Elaspsed time (ms): 494477.170053
+*************************************************
