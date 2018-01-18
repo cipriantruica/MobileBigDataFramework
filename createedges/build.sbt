@@ -1,4 +1,4 @@
-name := "OneMergedFile"
+name := "CreateEdges"
 
 version := "1.0"
 
