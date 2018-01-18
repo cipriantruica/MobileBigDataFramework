@@ -34,14 +34,14 @@ object CreateEdgesHive_v1 {
         import java.io._
         val pw = new PrintWriter(new File(printFile))
 
-        pw.println("Create_Edges_SparkSQL_TSV_v1!")
+        pw.println("Create_Edges_Hive_v1!")
         pw.println("Start time: " + Calendar.getInstance().getTime())
 
         val t0 = System.nanoTime()
 
         // Spark session
         // Create spark configuration
-        val sparkConf = new SparkConf().setAppName("Create_Edges_Hive")
+        val sparkConf = new SparkConf().setAppName("Create_Edges_Hive_v1")
 
         // Create spark context
         val sc = new SparkContext(sparkConf)
