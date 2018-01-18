@@ -20,7 +20,7 @@ object CreateEdgesHive_v1 {
         // val inputDirectory = args(0)
 
         // the file with the mearsuments
-        val printFile = "./results/runtime_Create_Edges_SparkSQL_TSV_v1.txt"
+        val printFile = "./results/runtime_Create_Edges_Hive_v1.txt"
         // val printFile = args(2)
 
         // the tsv schema
