@@ -13,7 +13,7 @@ import org.apache.spark.{SparkConf, SparkContext}
     It saves the output as parquet
 */
 
-object CreateEdgesSparkSQLTSV_v1 {
+object CreateEdgesHive_v1 {
   def main(args: Array[String]): Unit = {
         // input directory with the tsv
         val inputDirectory = "hdfs://hadoop-master:8020/user/ciprian/input/MI2MI/MItoMI-2013-11*" 
