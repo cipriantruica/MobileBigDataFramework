@@ -24,7 +24,7 @@ if __name__ == "__main__":
     df = hc.read.csv(inputDirectory, header=False, sep='\t', schema=fileSchema)
     df.createOrReplaceTempView("mi2mi_table")
 
-    sqlEdges = hc.sql("select Date MI_Date, SID1, SID2, sum(DIS) EdgeCost from (select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID1 SID1, SquareID2 SID2, DIS from mi2mi_table where SquareID1 <= SquareID2 union all select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID2, SquareID1, DIS from mi2mi_table where SquareID1 > SquareID2) group by Date, SID1, SID2 order by Date, SID1, SID2")
+    sqlEdges = hc.sql("select Date MilanoDate, SID1, SID2, sum(DIS) EdgeCost from (select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID1 SID1, SquareID2 SID2, DIS from mi2mi_table where SquareID1 <= SquareID2 union all select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID2, SquareID1, DIS from mi2mi_table where SquareID1 > SquareID2) group by Date, SID1, SID2 order by Date, SID1, SID2")
 
     sqlEdges.write.format("orc").saveAsTable("mi2mi.edges")
 
