@@ -24,6 +24,12 @@ object LinkFilteringHive_v1 {
         // Create Hive context
         val hc = new HiveContext(sc)
 
+        import java.io._
+        val pw = new PrintWriter(new File(printFile))
+
+        pw.println("Link Filtering Hive v1")
+        pw.println("Start time: " + Calendar.getInstance().getTime())
+
         val t0 = System.nanoTime()
         // read the data from the Hive
         val tbl = hc.table("mi2mi.edges")
