@@ -37,7 +37,7 @@ object LinkFilteringHive_v1 {
         // read the data from the Hive (mi2mi - is the database name, edges is the table name)
         val tbl = hc.table("mi2mi.edges")
         // register the table so it can be used in SQL
-        tbl.registerTempTable("edges")
+        tbl.createOrReplaceTempView("edges")
 
         // create the alpha from equation (1) for each day 
         // equation (1) has the following solution after computations : alpha_ij = (1-p_ij)^(k - 1) where: 
