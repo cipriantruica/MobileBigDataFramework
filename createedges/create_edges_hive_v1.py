@@ -14,7 +14,7 @@ if __name__ == "__main__":
         StructField("Timestamp", LongType(), True),
         StructField("SquareID1", IntegerType(), True),
         StructField("SquareID2", IntegerType(), True),
-        StructField("DIS", DoubleType(), True)])
+        StructField("DIS", LongType(), True)])
 
     startTimeTotal = time.time()
 
