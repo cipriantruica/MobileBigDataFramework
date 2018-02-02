@@ -9,11 +9,10 @@ object Driver {
   def main(args: Array[String]): Unit ={
 
     val config = LouvainConfig(
-      "src/data/input/sample.txt",
-      "src/data/output/",
       "mi2mi",
       "edges",
       "2013-11-03",
+      "output/louvain/",
       2000,
       1)
 
