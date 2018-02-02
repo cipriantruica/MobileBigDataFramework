@@ -22,7 +22,7 @@ class Louvain() extends Serializable{
     tbl.createOrReplaceTempView(conf.hiveInputTable)
     // select sid1, sid2, & edgecost for a date
     // [TO DO] see how to give a list of dates!
-    val ties = hc.sql("select sid1, sid2, round(EdgeCost * 1000000) ec from edges e where MilanoDate = '" + config.dateInput + "'")
+    val ties = hc.sql("select sid1, sid2, round(EdgeCost * 1000000) ec from edges e where MilanoDate = '" + conf.dateInput + "'")
     ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
 
   }
