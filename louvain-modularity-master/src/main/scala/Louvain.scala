@@ -19,11 +19,11 @@ class Louvain() extends Serializable{
     // read the data from the Hive (mi2mi - is the database name, edges is the table name)
     val tbl = hc.table(conf.hiveSchema + "." + conf.hiveInputTable)
     // register the table so it can be used in SQL
-    tbl.createOrReplaceTempView("edges")
+    tbl.createOrReplaceTempView(conf.hiveInputTable)
     // select sid1, sid2, & edgecost for a date
     // [TO DO] see how to give a list of dates!
     val ties = hc.sql("select sid1, sid2, EdgeCost from edges e where MilanoDate = '2013-11-01'")
-    ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[String]), typeConversionMethod(row(1).asInstanceOf[String]), row(2).asInstanceOf[Long]))
+    ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Long]))
 
 //    sc.textFile(conf.inputFile, conf.parallelism).map(row => {
 //      val tokens = row.split(conf.delimiter).map(_.trim())
