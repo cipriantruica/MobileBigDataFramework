@@ -3,6 +3,6 @@ case class LouvainConfig(
   outputDir: String,
   hiveSchema: String,
   hiveInputTable: String,
-  dateInput: String
+  dateInput: String,
   minimumCompressionProgress: Int,
-  progressCounter: Int
+  progressCounter: Int)
