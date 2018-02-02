@@ -13,7 +13,7 @@ object Driver {
       "src/data/output/",
       "mi2mi",
       "edges",
-      "2013-11-03"
+      "2013-11-03",
       2000,
       1)
 
