@@ -22,7 +22,7 @@ class Louvain() extends Serializable{
     tbl.createOrReplaceTempView(conf.hiveInputTable)
     // select sid1, sid2, & edgecost for a date
     // [TO DO] see how to give a list of dates!
-    val ties = hc.sql("select sid1, sid2, round(EdgeCost * 1000000) ec from edges e where MilanoDate = '2013-11-02'")
+    val ties = hc.sql("select sid1, sid2, round(EdgeCost * 1000000) ec from edges e where MilanoDate = '" + config.dateInput + "'")
     ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
 
   }
@@ -382,15 +382,15 @@ class Louvain() extends Serializable{
     qValues: Array[(Int, Long)],
     graph: Graph[LouvainData, Long]) = {
 
-    val vertexSavePath = config.outputDir + "/level_" + level + "_vertices"
-    val edgeSavePath = config.outputDir + "/level_" + level + "_edges"
+    val vertexSavePath = config.outputDir + "_" + config.dateInput + "/level_" + level + "_vertices"
+    val edgeSavePath = config.outputDir + "_" + config.dateInput + "/level_" + level + "_edges"
 
     // save
     graph.vertices.saveAsTextFile(vertexSavePath)
     graph.edges.saveAsTextFile(edgeSavePath)
 
     // overwrite the q values at each level
-    sc.parallelize(qValues, 1).saveAsTextFile(config.outputDir + "/qvalues_" + level)
+    sc.parallelize(qValues, 1).saveAsTextFile(config.outputDir + "_" + config.dateInput + "/qvalues_" + level)
   }
 
   //def run[VD: ClassTag](sc: SparkContext, config: LouvainConfig, graph: Graph[VD, Long]): Unit = {
