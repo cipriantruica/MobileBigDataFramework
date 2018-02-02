@@ -28,7 +28,7 @@ object CreateEdgesHive_v1 {
             StructField("Timestamp", LongType, true),
             StructField("SquareID1", IntegerType, true),
             StructField("SquareID2", IntegerType, true),
-            StructField("DIS", LongType, true)))
+            StructField("DIS", DoubleType, true)))
 
         // PrintWriter
         import java.io._
