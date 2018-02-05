@@ -396,7 +396,7 @@ class Louvain() extends Serializable{
     }).take(5).foreach{ println }
 
 
-    graph.vertices.saveAsTextFile(vertexSavePath)
+    // graph.vertices.saveAsTextFile(vertexSavePath)
     // graph.vertices.format("orc").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
     // save the edges if needed
     // graph.edges.saveAsTextFile(edgeSavePath)
