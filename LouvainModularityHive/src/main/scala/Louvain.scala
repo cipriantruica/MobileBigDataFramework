@@ -382,8 +382,8 @@ class Louvain() extends Serializable{
     qValues: Array[(Int, Long)],
     graph: Graph[LouvainData, Long]) = {
 
-    val vertexSavePath = config.outputDir + "_" + config.dateInput + "/level_" + level + "_vertices"
-    val edgeSavePath = config.outputDir + "_" + config.dateInput + "/level_" + level + "_edges"
+    val vertexSavePath = config.outputDir +  config.dateInput + "/level_" + level + "_vertices"
+    val edgeSavePath = config.outputDir + config.dateInput + "/level_" + level + "_edges"
 
     // save
     graph.vertices.saveAsTextFile(vertexSavePath)

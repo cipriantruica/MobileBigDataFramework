@@ -7,11 +7,12 @@ import org.apache.spark.sql.hive.HiveContext
 object Driver {
 
   def main(args: Array[String]): Unit ={
-
+    // the day for wich we compute louvain modularity
+    var date = args(0)
     val config = LouvainConfig(
       "mi2mi",
       "edges",
-      args(0),
+      date,
       "output/louvain/",
       2000,
       1)
@@ -38,7 +39,7 @@ object Driver {
     // Logger.getRootLogger.setLevel(Level.WARN)
 
     // Create spark configuration
-    val sparkConf = new SparkConf().setAppName("Louvain w/ Hive v1")
+    val sparkConf = new SparkConf().setAppName("Louvain w/ Hive v1 date:" + date)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)
