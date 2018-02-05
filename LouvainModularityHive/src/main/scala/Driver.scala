@@ -37,8 +37,8 @@ object Driver {
     // verify if the louvain modularity was already computed
     val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
     // register the table so it can be used in SQL
-    louvainTbl.createOrReplaceTempView(conf.hiveOutputTable)
-    exists = louvainTbl.sql("select count(*) from LouvainCommunity where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor).first.getInt(0)
+    louvainTbl.createOrReplaceTempView(config.hiveOutputTable)
+    val exists = louvainTbl.sql("select count(*) from LouvainCommunity where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor).first.getInt(0)
     println(exists)
     // val louvain = new Louvain()
     // louvain.run(sc, hc, config)
