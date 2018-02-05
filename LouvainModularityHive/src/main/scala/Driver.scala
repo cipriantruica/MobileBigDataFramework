@@ -9,8 +9,11 @@ object Driver {
   def main(args: Array[String]): Unit ={
     // the day for wich we compute louvain modularity
     var date = args(0)
-    var filter = args(1)
-    val config = LouvainConfig(
+    // the alpha threshold filter value
+    var alphaThreshold = args(1)
+    // a constant for changing the edge cost factor
+    var zoomInFactor = args(2)
+    val edgeCostFactor = LouvainConfig(
       "mi2mi",
       "edges",
       "LinkFiltering",
@@ -19,7 +22,8 @@ object Driver {
       "output/louvain_filter/",
       2000,
       1,
-      filter)
+      alphaThreshold,
+      zoomInFactor)
 
     // def deleteOutputDir(config: LouvainConfig): Unit = {
     //   val hadoopConf = new org.apache.hadoop.conf.Configuration()

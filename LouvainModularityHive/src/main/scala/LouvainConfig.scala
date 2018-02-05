@@ -7,4 +7,5 @@ case class LouvainConfig(
   outputDir: String,
   minimumCompressionProgress: Int,
   progressCounter: Int,
-  filter: String)
+  alphaThreshold: String,
+  edgeCostFactor: String)

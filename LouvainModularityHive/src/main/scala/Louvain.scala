@@ -10,6 +10,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.SparkContext._
 import org.apache.spark.graphx._
 import org.apache.spark.broadcast.Broadcast
+import spark.implicits._
 //import org.apache.spark.{Logging, SparkContext}
 import org.apache.spark.{SparkContext}
 import org.apache.spark.sql.hive.HiveContext
@@ -22,8 +23,10 @@ class Louvain() extends Serializable{
     edgesTbl.createOrReplaceTempView(conf.hiveInputTable)
     val alphaTbl = hc.table(conf.hiveSchema + "." + conf.hiveInputTableAlpha)
     alphaTbl.createOrReplaceTempView(conf.hiveInputTableAlpha)
-    // select sid1, sid2, & edgecost for a date
-    val ties = hc.sql("select sid1, sid2, round(EdgeCost * 1000000) ec from edges e where MilanoDate = '" + conf.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from LinkFiltering where alpha <= " + conf.filter + " and MilanoDate ='" + conf.dateInput + "')")
+    // select sid1, sid2, & edgecost for a date and a alpha threshold
+    val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.edgeCostFactor + ") ec from edges e where MilanoDate = '" + conf.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from LinkFiltering where alpha <= " + conf.alphaThreshold + " and MilanoDate ='" + conf.dateInput + "')")
+    // select sid1, sid2, & edgecost for a date and NO alpha threshold
+    // val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + conf.dateInput + "'")
     ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
 
   }
@@ -392,19 +395,15 @@ class Louvain() extends Serializable{
     println("level" + level)
     graph.vertices.take(5).foreach{ println }
    
-     graph.vertices.map(louvainVertex => {
+    graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
       (vertexId, louvainData.community, level)
     }).take(5).foreach{ println }
 
-
-    import java.io._
-    val pw = new PrintWriter(new File("results"))
-
-     graph.vertices.map(louvainVertex => {
+    graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
       (vertexId, louvainData.community, level)
-    }).take(5).foreach{ pw.println }
+    }).toDF()
 
 
     graph.vertices.saveAsTextFile(vertexSavePath)
