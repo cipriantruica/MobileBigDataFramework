@@ -13,6 +13,7 @@ object Driver {
     val config = LouvainConfig(
       "mi2mi",
       "edges",
+      "LinkFiltering",
       "louvaincommunity",
       date,
       "output/louvain_filter/",

@@ -17,13 +17,12 @@ import org.apache.spark.sql.hive.HiveContext
 class Louvain() extends Serializable{
   def getEdgeRDD(sc: SparkContext, hc: HiveContext, conf: LouvainConfig, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
     // read the data from the Hive (mi2mi - is the database name, edges is the table name)
-    val tbl = hc.table(conf.hiveSchema + "." + conf.hiveInputTable)
+    val edgesTbl = hc.table(conf.hiveSchema + "." + conf.hiveInputTable)
     // register the table so it can be used in SQL
-    tbl.createOrReplaceTempView(conf.hiveInputTable)
-    val tbl2 = hc.table(conf.hiveSchema + ".LinkFiltering")
-    tbl2.createOrReplaceTempView("LinkFiltering")
+    edgesTbl.createOrReplaceTempView(conf.hiveInputTable)
+    val alphaTbl = hc.table(conf.hiveSchema + "." + conf.hiveInputTableAlpha)
+    alphaTbl.createOrReplaceTempView(conf.hiveInputTableAlpha)
     // select sid1, sid2, & edgecost for a date
-    // [TO DO] see how to give a list of dates!
     val ties = hc.sql("select sid1, sid2, round(EdgeCost * 1000000) ec from edges e where MilanoDate = '" + conf.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from LinkFiltering where alpha <= " + conf.filter + " and MilanoDate ='" + conf.dateInput + "')")
     ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
 
