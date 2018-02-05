@@ -387,7 +387,7 @@ class Louvain() extends Serializable{
 
     val vertexSavePath = config.outputDir +  config.dateInput + "/level_" + level + "_vertices"
     
-    // val edgeSavePath = config.outputDir + config.dateInput + "/level_" + level + "_edges"
+    val edgeSavePath = config.outputDir + config.dateInput + "/level_" + level + "_edges"
 
     // save the date, edge, comunity, level
     println("level" + level)
