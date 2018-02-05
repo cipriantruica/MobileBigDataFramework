@@ -387,40 +387,12 @@ class Louvain() extends Serializable{
     qValues: Array[(Int, Long)],
     graph: Graph[LouvainData, Long]) = {
 
-    val vertexSavePath = config.outputDir +  config.dateInput + "/level_" + level + "_vertices"
-    
-    val edgeSavePath = config.outputDir + config.dateInput + "/level_" + level + "_edges"
-
-    // save the date, edge, comunity, level
-    println("level" + level)
-    graph.vertices.take(5).foreach{ println }
-   
-    graph.vertices.map(louvainVertex => {
-      val (vertexId, louvainData) = louvainVertex
-      (config.dateInput , vertexId, louvainData.community, level, config.alphaThreshold.toFloat, config.edgeCostFactor.toInt)
-    }).take(5).foreach{ println }
-
     val vertexRDD = graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
       (config.dateInput , vertexId, louvainData.community, level, config.alphaThreshold.toFloat, config.edgeCostFactor.toInt)
     })
-    println("=====================================================")
-    println(vertexSavePath)
-    println(edgeSavePath)
   
-    val df = hc.createDataFrame(vertexRDD)//, fileSchema)
-    // df.write.mode("append").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
-    df.write.format("orc").mode("append").insertInto(config.hiveSchema + "." + config.hiveOutputTable)
-    df.show()
-    println("=====================================================")
-    // .write.format("orc").mode("append").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
-    // graph.vertices.saveAsTextFile(vertexSavePath)
-    // graph.vertices.format("orc").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
-    // save the edges if needed
-    // graph.edges.saveAsTextFile(edgeSavePath)
-
-    // overwrite the q values at each level
-    // sc.parallelize(qValues, 1).saveAsTextFile(config.outputDir + config.dateInput + "/qvalues_" + level)
+    val df = hc.createDataFrame(vertexRDD)
   }
 
   //def run[VD: ClassTag](sc: SparkContext, config: LouvainConfig, graph: Graph[VD, Long]): Unit = {
