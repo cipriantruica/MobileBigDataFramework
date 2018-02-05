@@ -38,8 +38,8 @@ object Driver {
     val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
     // register the table so it can be used in SQL
     louvainTbl.createOrReplaceTempView(config.hiveOutputTable)
-    val exists = louvainTbl.sql("select count(*) from LouvainCommunity where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor).collectAsList().get(0).get(0).toInteger
-    println(exists)
+    val exists = louvainTbl.sql("select count(*) NrRecords from LouvainCommunity where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    println(exists("NrRecords")(0))
     // val louvain = new Louvain()
     // louvain.run(sc, hc, config)
 
