@@ -12,8 +12,8 @@ object Driver {
     // the alpha threshold filter value
     var alphaThreshold = args(1)
     // a constant for changing the edge cost factor
-    var zoomInFactor = args(2)
-    val edgeCostFactor = LouvainConfig(
+    var edgeCostFactor = args(2)
+    val config = LouvainConfig(
       "mi2mi",
       "edges",
       "LinkFiltering",
@@ -23,7 +23,7 @@ object Driver {
       2000,
       1,
       alphaThreshold,
-      zoomInFactor)
+      edgeCostFactor)
 
     // def deleteOutputDir(config: LouvainConfig): Unit = {
     //   val hadoopConf = new org.apache.hadoop.conf.Configuration()
