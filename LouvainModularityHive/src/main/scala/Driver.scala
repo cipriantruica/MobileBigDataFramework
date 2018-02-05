@@ -41,7 +41,7 @@ object Driver {
     // val exists = hc.sql("select count(MilanoDate), alphaThreshold from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and edgeCostFactor = " + config.edgeCostFactor + " group by alphaThreshold")
     exists.show()
     println("exists: " + exists.first().getLong(0))
-    if(exists == 0){
+    if(exists.first().getLong(0) == 0){
       val louvain = new Louvain()
       louvain.run(sc, hc, config)  
     }
