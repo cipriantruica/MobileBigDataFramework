@@ -33,15 +33,15 @@ object Driver {
     val hc = new HiveContext(sc)
 
     // verify if the louvain modularity was already computed
-    // val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
+    val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
     // // register the table so it can be used in SQL
     // louvainTbl.createOrReplaceTempView(config.hiveOutputTable)
-    // val exists = hc.sql("select distinct MilanoDate from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor = " + config.edgeCostFactor)
-    // exists.show()
-    // println("exists: " + exists.first().getLong(0))
+    val exists = hc.sql("select count(MilanoDate) from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor = " + config.edgeCostFactor)
+    exists.show()
+    println("exists: " + exists.first().getLong(0))
     // if(exists == 0){
-      val louvain = new Louvain()
-      louvain.run(sc, hc, config)  
+    //   val louvain = new Louvain()
+    //   louvain.run(sc, hc, config)  
     // }
     // else{
     //   println("already computer for MilanoDate = " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
