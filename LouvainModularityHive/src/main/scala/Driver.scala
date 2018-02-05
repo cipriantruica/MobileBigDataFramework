@@ -17,34 +17,13 @@ object Driver {
       "mi2mi",
       "edges",
       "LinkFiltering",
-      "louvaincommunity",
+      "LouvainCommunity", // this table must be created manualy in Hive
       date,
       "output/louvain_filter/",
       2000,
       1,
       alphaThreshold,
       edgeCostFactor)
-
-    // def deleteOutputDir(config: LouvainConfig): Unit = {
-    //   val hadoopConf = new org.apache.hadoop.conf.Configuration()
-
-    //   val hdfs = org.apache.hadoop.fs.FileSystem.get(new java.net.URI("hdfs://localhost:8020"), hadoopConf)
-
-    //   try {
-    //     hdfs.delete(new org.apache.hadoop.fs.Path(config.outputDir), true)
-    //   }
-    //   catch {
-    //     case _ : Throwable => { }
-    //   }
-    // }
-
-    // val conf = new SparkConf().setAppName("ApproxTriangles").setMaster("local[2]")
-    // conf.set("spark.default.parallelism", (8).toString)
-    // conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-    // conf.set("spark.logConf", "true")
-    // //sparkConf.getAll.foreach(println(_))
-    // val sc = new SparkContext(conf)
-    // Logger.getRootLogger.setLevel(Level.WARN)
 
     // Create spark configuration
     val sparkConf = new SparkConf().setAppName("Louvain w/ Hive v1 date:" + date)
@@ -55,9 +34,14 @@ object Driver {
     val hc = new HiveContext(sc)
 
     // deleteOutputDir(config)
-
-    val louvain = new Louvain()
-    louvain.run(sc, hc, config)
+    // verify if the louvain modularity was already computed
+    val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
+    // register the table so it can be used in SQL
+    louvainTbl.createOrReplaceTempView(conf.hiveOutputTable)
+    exists = louvainTbl.sql("select count(*) from LouvainCommunity where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor).first.getInt(0)
+    println(exists)
+    // val louvain = new Louvain()
+    // louvain.run(sc, hc, config)
 
   }
 }

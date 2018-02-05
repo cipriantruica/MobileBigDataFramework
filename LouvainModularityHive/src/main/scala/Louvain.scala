@@ -16,17 +16,17 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.hive.HiveContext
 
 class Louvain() extends Serializable{
-  def getEdgeRDD(sc: SparkContext, hc: HiveContext, conf: LouvainConfig, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
+  def getEdgeRDD(sc: SparkContext, hc: HiveContext, config: LouvainConfig, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
     // read the data from the Hive (mi2mi - is the database name, edges is the table name)
-    val edgesTbl = hc.table(conf.hiveSchema + "." + conf.hiveInputTable)
+    val edgesTbl = hc.table(config.hiveSchema + "." + config.hiveInputTable)
     // register the table so it can be used in SQL
-    edgesTbl.createOrReplaceTempView(conf.hiveInputTable)
-    val alphaTbl = hc.table(conf.hiveSchema + "." + conf.hiveInputTableAlpha)
-    alphaTbl.createOrReplaceTempView(conf.hiveInputTableAlpha)
+    edgesTbl.createOrReplaceTempView(config.hiveInputTable)
+    val alphaTbl = hc.table(config.hiveSchema + "." + config.hiveInputTableAlpha)
+    alphaTbl.createOrReplaceTempView(config.hiveInputTableAlpha)
     // select sid1, sid2, & edgecost for a date and a alpha threshold
-    val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.edgeCostFactor + ") ec from edges e where MilanoDate = '" + conf.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from LinkFiltering where alpha <= " + conf.alphaThreshold + " and MilanoDate ='" + conf.dateInput + "')")
+    val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from LinkFiltering where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + config.dateInput + "')")
     // select sid1, sid2, & edgecost for a date and NO alpha threshold
-    // val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + conf.dateInput + "'")
+    // val edgesTbl = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "'")
     ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
 
   }
@@ -397,7 +397,7 @@ class Louvain() extends Serializable{
    
     graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
-      (vertexId, louvainData.community, level)
+      (config.dateInput , vertexId, louvainData.community, level, config.alphaThreshold.toFloat, config.edgeCostFactor.toInt)
     }).take(5).foreach{ println }
 
     val vertexRDD = graph.vertices.map(louvainVertex => {
@@ -407,15 +407,9 @@ class Louvain() extends Serializable{
     println("=====================================================")
     println(vertexSavePath)
     println(edgeSavePath)
-    val fileSchema = StructType(Array(
-            StructField("MilanoDate", DateType, true),
-            StructField("SID1", IntegerType, true),
-            StructField("level", IntegerType, true),
-            StructField("alphaThreshold", DoubleType, true),
-            StructField("edgeCostFactor", IntegerType, true)
-          ))
-
+  
     val df = hc.createDataFrame(vertexRDD)//, fileSchema)
+    df.write.format("orc").mode("append").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
     df.show()
     println("=====================================================")
     // .write.format("orc").mode("append").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
