@@ -390,10 +390,20 @@ class Louvain() extends Serializable{
     // save the date, edge, comunity, level
     println("level" + level)
     graph.vertices.take(5).foreach{ println }
-    graph.vertices.map(louvainVertex => {
+   
+     graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
       (vertexId, louvainData.community, level)
     }).take(5).foreach{ println }
+
+
+    import java.io._
+    val pw = new PrintWriter(new File("results"))
+
+     graph.vertices.map(louvainVertex => {
+      val (vertexId, louvainData) = louvainVertex
+      (vertexId, louvainData.community, level)
+    }).take(5).foreach{ pw.println }
 
 
     // graph.vertices.saveAsTextFile(vertexSavePath)
