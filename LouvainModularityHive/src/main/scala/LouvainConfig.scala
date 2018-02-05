@@ -4,8 +4,7 @@ case class LouvainConfig(
   hiveInputTableAlpha: String,
   hiveOutputTable: String,
   dateInput: String,
-  outputDir: String,
-  minimumCompressionProgress: Int,
-  progressCounter: Int,
   alphaThreshold: String,
-  edgeCostFactor: String)
+  edgeCostFactor: String,
+  minimumCompressionProgress: Int,
+  progressCounter: Int)

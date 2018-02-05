@@ -19,11 +19,10 @@ object Driver {
       "LinkFiltering",
       "LouvainCommunity", // this table must be created manualy in Hive
       date,
-      "output/louvain_filter/",
-      2000,
-      1,
       alphaThreshold,
-      edgeCostFactor)
+      edgeCostFactor,
+      2000,
+      1)
 
     // Create spark configuration
     val sparkConf = new SparkConf().setAppName("Louvain w/ Hive v1 date:" + date)
@@ -33,14 +32,13 @@ object Driver {
     // Create Hive context
     val hc = new HiveContext(sc)
 
-    // deleteOutputDir(config)
     // verify if the louvain modularity was already computed
     val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
     // register the table so it can be used in SQL
     louvainTbl.createOrReplaceTempView(config.hiveOutputTable)
-    val exists = hc.sql("select count(MilanoDate) NrRecords from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor = " + config.edgeCostFactor)
+    val exists = hc.sql("select distinct MilanoDate from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor = " + config.edgeCostFactor)
     exists.show()
-    println("exists: " + exists.first().getLong(0))
+    // println("exists: " + exists.first().getLong(0))
     // if(exists == 0){
     //   val louvain = new Louvain()
     //   louvain.run(sc, hc, config)  
