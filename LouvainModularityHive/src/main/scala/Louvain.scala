@@ -409,7 +409,8 @@ class Louvain() extends Serializable{
     println(edgeSavePath)
   
     val df = hc.createDataFrame(vertexRDD)//, fileSchema)
-    df.write.mode("append").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
+    // df.write.mode("append").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
+    df.write.format("orc").mode("overwrite").insertInto(config.hiveSchema + "." + config.hiveOutputTable)
     df.show()
     println("=====================================================")
     // .write.format("orc").mode("append").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
