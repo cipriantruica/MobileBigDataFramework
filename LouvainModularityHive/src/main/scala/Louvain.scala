@@ -390,9 +390,14 @@ class Louvain() extends Serializable{
     // save the date, edge, comunity, level
     println("level" + level)
     graph.vertices.take(5).foreach{ println }
+    graph.vertices.map(louvainVertex => {
+      val (vertexId, louvainData) = louvainVertex
+      (vertexId, louvainData.community, level)
+    }).take(5).foreach{ println }
 
-    // graph.vertices.saveAsTextFile(vertexSavePath)
-    graph.vertices.format("orc").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
+
+    graph.vertices.saveAsTextFile(vertexSavePath)
+    // graph.vertices.format("orc").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
     // save the edges if needed
     // graph.edges.saveAsTextFile(edgeSavePath)
 
