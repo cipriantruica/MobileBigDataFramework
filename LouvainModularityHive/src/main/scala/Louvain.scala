@@ -12,6 +12,7 @@ import org.apache.spark.graphx._
 import org.apache.spark.broadcast.Broadcast
 //import org.apache.spark.{Logging, SparkContext}
 import org.apache.spark.{SparkContext}
+import org.apache.spark.sql.types._
 import org.apache.spark.sql.hive.HiveContext
 
 class Louvain() extends Serializable{
@@ -403,17 +404,28 @@ class Louvain() extends Serializable{
       val (vertexId, louvainData) = louvainVertex
       (config.dateInput , vertexId, louvainData.community, level, config.alphaThreshold.toFloat, config.edgeCostFactor.toInt)
     })
+    println("=====================================================")
+    println(vertexSavePath)
+    println(edgeSavePath)
+    val fileSchema = StructType(Array(
+            StructField("MilanoDate", DateType, true),
+            StructField("SID1", IntegerType, true),
+            StructField("level", IntegerType, true),
+            StructField("alphaThreshold", DoubleType, true),
+            StructField("edgeCostFactor", IntegerType, true)
+          ))
 
-    val df = hc.createDataFrame(vertexRDD)
+    val df = hc.createDataFrame(vertexRDD).
     df.show()
-
-    graph.vertices.saveAsTextFile(vertexSavePath)
+    println("=====================================================")
+    // .write.format("orc").mode("append").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
+    // graph.vertices.saveAsTextFile(vertexSavePath)
     // graph.vertices.format("orc").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
     // save the edges if needed
-    graph.edges.saveAsTextFile(edgeSavePath)
+    // graph.edges.saveAsTextFile(edgeSavePath)
 
     // overwrite the q values at each level
-    sc.parallelize(qValues, 1).saveAsTextFile(config.outputDir + config.dateInput + "/qvalues_" + level)
+    // sc.parallelize(qValues, 1).saveAsTextFile(config.outputDir + config.dateInput + "/qvalues_" + level)
   }
 
   //def run[VD: ClassTag](sc: SparkContext, config: LouvainConfig, graph: Graph[VD, Long]): Unit = {
@@ -457,8 +469,5 @@ class Louvain() extends Serializable{
       }
 
     } while (!halt)
-      //finalSave(sc, compressionLevel, q_modularityValue, louvainGraph)
-
-
   }
 }
