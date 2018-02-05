@@ -415,7 +415,7 @@ class Louvain() extends Serializable{
             StructField("edgeCostFactor", IntegerType, true)
           ))
 
-    val df = hc.createDataFrame(vertexRDD).
+    val df = hc.createDataFrame(vertexRDD).schema(fileSchema)
     df.show()
     println("=====================================================")
     // .write.format("orc").mode("append").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
