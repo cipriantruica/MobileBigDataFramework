@@ -14,7 +14,7 @@ object Driver {
       "edges",
       "louvaincommunity"
       date,
-      "output/louvain/",
+      "output/louvain_filter/",
       2000,
       1)
 

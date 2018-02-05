@@ -20,9 +20,11 @@ class Louvain() extends Serializable{
     val tbl = hc.table(conf.hiveSchema + "." + conf.hiveInputTable)
     // register the table so it can be used in SQL
     tbl.createOrReplaceTempView(conf.hiveInputTable)
+    val tbl2 = hc.table(conf.hiveSchema + ".LinkFiltering")
+    tbl2.createOrReplaceTempView("LinkFiltering")
     // select sid1, sid2, & edgecost for a date
     // [TO DO] see how to give a list of dates!
-    val ties = hc.sql("select sid1, sid2, round(EdgeCost * 1000000) ec from edges e where sid1 = 1 and MilanoDate = '" + conf.dateInput + "'")
+    val ties = hc.sql("select sid1, sid2, round(EdgeCost * 1000000) ec from edges e where MilanoDate = '" + conf.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from LinkFiltering where alpha <= 0.5 and MilanoDate =" + conf.dateInput + ")")
     ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
 
   }
@@ -406,13 +408,13 @@ class Louvain() extends Serializable{
     }).take(5).foreach{ pw.println }
 
 
-    // graph.vertices.saveAsTextFile(vertexSavePath)
+    graph.vertices.saveAsTextFile(vertexSavePath)
     // graph.vertices.format("orc").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
     // save the edges if needed
-    // graph.edges.saveAsTextFile(edgeSavePath)
+    graph.edges.saveAsTextFile(edgeSavePath)
 
     // overwrite the q values at each level
-    // sc.parallelize(qValues, 1).saveAsTextFile(config.outputDir + config.dateInput + "/qvalues_" + level)
+    sc.parallelize(qValues, 1).saveAsTextFile(config.outputDir + config.dateInput + "/qvalues_" + level)
   }
 
   //def run[VD: ClassTag](sc: SparkContext, config: LouvainConfig, graph: Graph[VD, Long]): Unit = {
