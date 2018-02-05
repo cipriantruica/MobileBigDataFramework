@@ -377,21 +377,27 @@ class Louvain() extends Serializable{
 
   def saveLevel(
     sc: SparkContext,
+    hc: HiveContext,
     config: LouvainConfig,
     level: Int,
     qValues: Array[(Int, Long)],
     graph: Graph[LouvainData, Long]) = {
 
     val vertexSavePath = config.outputDir +  config.dateInput + "/level_" + level + "_vertices"
-    val edgeSavePath = config.outputDir + config.dateInput + "/level_" + level + "_edges"
+    
+    // val edgeSavePath = config.outputDir + config.dateInput + "/level_" + level + "_edges"
 
-    // save
+    // save the date, edge, comunity, level
+    println("level" + level)
     graph.vertices.take(5).foreach{ println }
-    graph.vertices.saveAsTextFile(vertexSavePath)
-    graph.edges.saveAsTextFile(edgeSavePath)
+
+    // graph.vertices.saveAsTextFile(vertexSavePath)
+    graph.vertices.format("orc").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
+    // save the edges if needed
+    // graph.edges.saveAsTextFile(edgeSavePath)
 
     // overwrite the q values at each level
-    sc.parallelize(qValues, 1).saveAsTextFile(config.outputDir + config.dateInput + "/qvalues_" + level)
+    // sc.parallelize(qValues, 1).saveAsTextFile(config.outputDir + config.dateInput + "/qvalues_" + level)
   }
 
   //def run[VD: ClassTag](sc: SparkContext, config: LouvainConfig, graph: Graph[VD, Long]): Unit = {
@@ -421,7 +427,7 @@ class Louvain() extends Serializable{
 
       qValues = qValues :+ ((compressionLevel, currentQModularityValue))
 
-      saveLevel(sc, config, compressionLevel, qValues, louvainGraph)
+      saveLevel(sc, hc, config, compressionLevel, qValues, louvainGraph)
 
       // If modularity was increased by at least 0.001 compress the graph and repeat
       // halt immediately if the community labeling took less than 3 passes

@@ -12,6 +12,7 @@ object Driver {
     val config = LouvainConfig(
       "mi2mi",
       "edges",
+      "louvaincommunity"
       date,
       "output/louvain/",
       2000,
