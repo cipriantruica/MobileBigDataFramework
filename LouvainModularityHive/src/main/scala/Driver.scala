@@ -54,7 +54,7 @@ object Driver {
     // Create spark context
     val sc = new SparkContext(sparkConf)
     // Create Hive context
-    val hc = new SparkSession(sc)
+    val hc = new SparkSession().builder.appName("Louvain w/ Hive v1 date:" + date).getOrCreate;
 
     // deleteOutputDir(config)
 
