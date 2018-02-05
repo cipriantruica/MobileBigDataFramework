@@ -10,7 +10,6 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.SparkContext._
 import org.apache.spark.graphx._
 import org.apache.spark.broadcast.Broadcast
-import spark.implicits._
 //import org.apache.spark.{Logging, SparkContext}
 import org.apache.spark.{SparkContext}
 import org.apache.spark.sql.hive.HiveContext
@@ -400,11 +399,12 @@ class Louvain() extends Serializable{
       (vertexId, louvainData.community, level)
     }).take(5).foreach{ println }
 
-    graph.vertices.map(louvainVertex => {
+    val vertexRDD = graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
       (vertexId, louvainData.community, level)
-    }).toDF
+    })
 
+    val df = sc.createDataFrame(vertexRDD)
 
     graph.vertices.saveAsTextFile(vertexSavePath)
     // graph.vertices.format("orc").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
