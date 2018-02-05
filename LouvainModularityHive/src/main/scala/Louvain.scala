@@ -17,6 +17,13 @@ import org.apache.spark.sql.hive.HiveContext
 
 class Louvain() extends Serializable{
   def getEdgeRDD(sc: SparkContext, hc: HiveContext, config: LouvainConfig, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
+    // verify if the louvain modularity was already computed
+    val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
+    // register the table so it can be used in SQL
+    louvainTbl.createOrReplaceTempView(config.hiveOutputTable)
+    val exists = hc.sql("select count(MilanoDate) from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor = " + config.edgeCostFactor)
+    exists.show()
+    
     // read the data from the Hive (mi2mi - is the database name, edges is the table name)
     val edgesTbl = hc.table(config.hiveSchema + "." + config.hiveInputTable)
     // register the table so it can be used in SQL
@@ -401,40 +408,47 @@ class Louvain() extends Serializable{
     val initialGraph = Graph.fromEdges(edgeRDD, None)
     var louvainGraph = createLouvainGraph(initialGraph)
 
-    var compressionLevel = -1 // number of times the graph has been compressed
-    var q_modularityValue = -1.0 // current modularity value
-    var halt = false
+    // verify if the louvain modularity was already computed
+    val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
+    // register the table so it can be used in SQL
+    louvainTbl.createOrReplaceTempView(config.hiveOutputTable)
+    val exists = hc.sql("select count(MilanoDate) from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor = " + config.edgeCostFactor)
+    exists.show()
 
-    var qValues: Array[(Int, Long)] = Array()
+    // var compressionLevel = -1 // number of times the graph has been compressed
+    // var q_modularityValue = -1.0 // current modularity value
+    // var halt = false
 
-    do {
-      compressionLevel += 1
-      println(s"\nStarting Louvain level $compressionLevel")
+    // var qValues: Array[(Int, Long)] = Array()
 
-      // label each vertex with its best community choice at this level of compression
-      val (currentQModularityValue, currentGraph, numberOfPasses) =
-        louvain(sc, louvainGraph, config.minimumCompressionProgress, config.progressCounter)
+    // do {
+    //   compressionLevel += 1
+    //   println(s"\nStarting Louvain level $compressionLevel")
 
-      louvainGraph.unpersistVertices(blocking = false)
-      louvainGraph = currentGraph
+    //   // label each vertex with its best community choice at this level of compression
+    //   val (currentQModularityValue, currentGraph, numberOfPasses) =
+    //     louvain(sc, louvainGraph, config.minimumCompressionProgress, config.progressCounter)
 
-      println(s"qValue: $currentQModularityValue")
+    //   louvainGraph.unpersistVertices(blocking = false)
+    //   louvainGraph = currentGraph
 
-      qValues = qValues :+ ((compressionLevel, currentQModularityValue))
+    //   println(s"qValue: $currentQModularityValue")
 
-      saveLevel(sc, hc, config, compressionLevel, qValues, louvainGraph)
+    //   qValues = qValues :+ ((compressionLevel, currentQModularityValue))
 
-      // If modularity was increased by at least 0.001 compress the graph and repeat
-      // halt immediately if the community labeling took less than 3 passes
-      //println(s"if ($passes > 2 && $currentQ > $q + 0.001 )")
-      if (numberOfPasses > 2 && currentQModularityValue > q_modularityValue + 0.001) {
-        q_modularityValue = currentQModularityValue
-        louvainGraph = compressGraph(louvainGraph)
-      }
-      else {
-        halt = true
-      }
+    //   saveLevel(sc, hc, config, compressionLevel, qValues, louvainGraph)
 
-    } while (!halt)
+    //   // If modularity was increased by at least 0.001 compress the graph and repeat
+    //   // halt immediately if the community labeling took less than 3 passes
+    //   //println(s"if ($passes > 2 && $currentQ > $q + 0.001 )")
+    //   if (numberOfPasses > 2 && currentQModularityValue > q_modularityValue + 0.001) {
+    //     q_modularityValue = currentQModularityValue
+    //     louvainGraph = compressGraph(louvainGraph)
+    //   }
+    //   else {
+    //     halt = true
+    //   }
+
+    // } while (!halt)
   }
 }
