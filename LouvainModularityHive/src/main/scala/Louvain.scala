@@ -405,6 +405,7 @@ class Louvain() extends Serializable{
     })
 
     val df = hc.createDataFrame(vertexRDD)
+    df.show()
 
     graph.vertices.saveAsTextFile(vertexSavePath)
     // graph.vertices.format("orc").saveAsTable(config.hiveSchema + "." + config.hiveOutputTable)
