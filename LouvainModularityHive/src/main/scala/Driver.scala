@@ -2,8 +2,6 @@ import org.apache.spark.graphx.{Edge, Graph}
 import org.apache.spark.{SparkContext, SparkConf}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.hive.HiveContext
-import org.apache.spark.sql.SparkSession
-
 
 
 object Driver {
@@ -54,7 +52,7 @@ object Driver {
     // Create spark context
     val sc = new SparkContext(sparkConf)
     // Create Hive context
-    val hc = new SparkSession().builder.appName("Louvain w/ Hive v1 date:" + date).getOrCreate;
+    val hc = new HiveContext(sc)
 
     // deleteOutputDir(config)
 
