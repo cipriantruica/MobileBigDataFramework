@@ -386,13 +386,16 @@ class Louvain() extends Serializable{
     level: Int,
     qValues: Array[(Int, Long)],
     graph: Graph[LouvainData, Long]) = {
+
     val alphaThreshold = config.alphaThreshold.toFloat * 1000
     val vertexRDD = graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
       (config.dateInput , vertexId, louvainData.community, level, alphaThreshold.toInt, config.edgeCostFactor.toInt)
     })
   
-    val df = hc.createDataFrame(vertexRDD)
+    val df = hc.createDataFrame(vertexRDD)//, fileSchema)
+    
+    df.write.format("orc").mode("append").insertInto(config.hiveSchema + "." + config.hiveOutputTable)    
   }
 
   //def run[VD: ClassTag](sc: SparkContext, config: LouvainConfig, graph: Graph[VD, Long]): Unit = {
