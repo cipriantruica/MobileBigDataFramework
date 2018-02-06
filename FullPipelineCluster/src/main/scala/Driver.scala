@@ -11,7 +11,7 @@ object Driver {
 
   def main(args: Array[String]): Unit ={
     // the file with the mearsuments
-    val printFile = "./results/runtime_Louvain_Modularity_Hive.txt"
+    val printFile = "./results/runtime_Louvain_Modularity_Hivet" + args(4) + ".txt"
     // the day for wich we compute louvain modularity
     var date = args(0)
     // the alpha threshold filter value
