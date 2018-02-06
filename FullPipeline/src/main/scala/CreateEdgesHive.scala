@@ -59,7 +59,7 @@ object CreateEdgesHive {
 
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
-    pw.println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("Elapsed time (ms): " + ((t1 - t0)/1e6))
     pw.println("*************************************************")
 
     pw.close()

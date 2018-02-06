@@ -55,14 +55,14 @@ object LinkFilteringHive {
         ties.write.format("orc").saveAsTable("mi2mi.LinkFiltering")
 
         // tried a filter for alpha_threshold == 0.5
-        ties.filter(ties("alpha") <= 0.05).show()
+        // ties.filter(ties("alpha") <= 0.05).show()
 
         val t1 = System.nanoTime()
 
         pw.println("End time: " + Calendar.getInstance().getTime())
-        pw.println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
+        pw.println("Elapsed time (ms): " + ((t1 - t0)/1e6))
 	println("Link Filtering Hive Test no. " + args(0))
-	println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
+	println("Elapsed time (ms): " + ((t1 - t0)/1e6))
         pw.println("*************************************************")
 
         pw.close()

@@ -56,8 +56,8 @@ object Driver {
 
     val exists = hc.sql("select count(MilanoDate) from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and edgeCostFactor = " + config.edgeCostFactor + " and alphaThreshold = " + config.alphaThreshold + " * 1000" )
     // val exists = hc.sql("select count(MilanoDate), alphaThreshold from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and edgeCostFactor = " + config.edgeCostFactor + " group by alphaThreshold")
-    exists.show()
-    println("exists: " + exists.first().getLong(0))
+    // exists.show()
+    // println("exists: " + exists.first().getLong(0))
     if(exists.first().getLong(0) == 0){
       val louvain = new Louvain()
       louvain.run(sc, hc, config)  
@@ -69,7 +69,7 @@ object Driver {
 
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
-    pw.println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("Elapsed time (ms): " + ((t1 - t0)/1e6))
     pw.println("*************************************************")
 
     pw.close()
