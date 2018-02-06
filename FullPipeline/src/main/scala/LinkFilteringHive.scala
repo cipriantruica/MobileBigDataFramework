@@ -16,7 +16,8 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object LinkFilteringHive {
   def main(args: Array[String]): Unit = {
-
+    // the file with the mearsuments
+    val printFile = "./results/runtime_Link_Filtering_Hive.txt"
     // Create spark configuration
     val sparkConf = new SparkConf().setMaster("local[*]").setAppName("Link Filtering Hive v1")
 
@@ -24,8 +25,16 @@ object LinkFilteringHive {
     val sc = new SparkContext(sparkConf)
     // Create Hive context
     val hc = new HiveContext(sc)
+    
+    // dropt the table if it exists
+    hc.sql("drop table if exists LinkFiltering")
 
+    // PrintWriter
+    import java.io._
+    val pw = new PrintWriter(new File(printFile))
 
+    pw.println("Create Edges Hive")
+    pw.println("Start time: " + Calendar.getInstance().getTime())
 
     val t0 = System.nanoTime()
     // read the data from the Hive (mi2mi - is the database name, edges is the table name)
@@ -50,6 +59,10 @@ object LinkFilteringHive {
     // ties.filter(ties("alpha") <= 0.05).show()
 
     val t1 = System.nanoTime()
-    println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("End time: " + Calendar.getInstance().getTime())
+    pw.println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("*************************************************")
+
+    pw.close()
   }
 }

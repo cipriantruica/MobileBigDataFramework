@@ -13,7 +13,7 @@ import org.apache.spark.{SparkConf, SparkContext}
     It saves the output as parquet
 */
 
-object LinkFilteringHive_v1 {
+object LinkFilteringHive {
   def main(args: Array[String]): Unit = {
         // the file with the mearsuments
         val printFile = "./results/runtime_Link_Filtering_Hive.txt"
@@ -32,7 +32,7 @@ object LinkFilteringHive_v1 {
         import java.io._
         val pw = new PrintWriter(new File(printFile))
 
-        pw.println("Link Filtering Hive v1")
+        pw.println("Link Filtering Hive")
         pw.println("Start time: " + Calendar.getInstance().getTime())
 
         val t0 = System.nanoTime()

@@ -13,7 +13,7 @@ import org.apache.spark.{SparkConf, SparkContext}
     It saves the output as parquet
 */
 
-object CreateEdgesHive_v1 {
+object CreateEdgesHive {
   def main(args: Array[String]): Unit = {
         // input directory with the tsv
         val inputDirectory = "hdfs://hadoop-master:8020/user/ciprian/input/MI2MI/MItoMI-2013-11*" 
@@ -33,7 +33,7 @@ object CreateEdgesHive_v1 {
 
         // Spark session
         // Create spark configuration
-        val sparkConf = new SparkConf().setAppName("Create_Edges_Hive_v1")
+        val sparkConf = new SparkConf().setAppName("Create Edges Hive")
 
         // Create spark context
         val sc = new SparkContext(sparkConf)

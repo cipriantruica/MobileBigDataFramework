@@ -1,7 +1,7 @@
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types._
 import org.apache.spark.{SparkConf, SparkContext}
-
+import java.util.Calendar
 /*
     It reads all the data from the tcv and computes the edges.
     It uses a Dataframe with a single select.
@@ -13,15 +13,14 @@ object CreateEdgesHive {
     // input directory with the tsv
     // val inputDirectory = "hdfs://localhost:9000/user/sheepman/input/MI2MI/MItoMI-2013-11*"
     val inputDirectory = "file:///home/sheepman/DATA_SETS/MItoMI-2013-11*"
-
+    // the file with the mearsuments
+    val printFile = "./results/runtime_Create_Edges_Hive.txt"
     // the tsv schema
     val fileSchema = StructType(Array(
       StructField("Timestamp", LongType, true),
       StructField("SquareID1", IntegerType, true),
       StructField("SquareID2", IntegerType, true),
       StructField("DIS", DoubleType, true)))
-
-    val t0 = System.nanoTime()
 
     // Spark session
     // Create spark configuration
@@ -31,6 +30,18 @@ object CreateEdgesHive {
     val sc = new SparkContext(sparkConf)
     // Create Hive context
     val hc = new HiveContext(sc)
+
+    // drop table if it exists
+    hc.sql("drop table if exists edges")
+
+    // PrintWriter
+    import java.io._
+    val pw = new PrintWriter(new File(printFile))
+
+    pw.println("Create Edges Hive")
+    pw.println("Start time: " + Calendar.getInstance().getTime())
+
+    val t0 = System.nanoTime()
 
     // read the data from the tsv files
     val df = hc.read.format("csv")
@@ -47,7 +58,11 @@ object CreateEdgesHive {
       .write.format("orc").saveAsTable("edges")
 
     val t1 = System.nanoTime()
-    println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("End time: " + Calendar.getInstance().getTime())
+    pw.println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("*************************************************")
+
+    pw.close()
 
   }
 }
