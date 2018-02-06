@@ -20,7 +20,7 @@ object CreateEdgesHive {
         // val inputDirectory = args(0)
 
         // the file with the mearsuments
-        val printFile = "./results/runtime_Create_Edges_Hive_t" + args(0) + ".txt"
+        val printFile = "./results/runtime_Create_Edges_Hive_test_" + args(0) + ".txt"
         // val printFile = args(2)
 
         // the tsv schema

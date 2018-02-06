@@ -16,7 +16,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 object LinkFilteringHive {
   def main(args: Array[String]): Unit = {
         // the file with the mearsuments
-        val printFile = "./results/runtime_Link_Filtering_Hivet" + args(0) + ".txt"
+        val printFile = "./results/runtime_Link_Filtering_Hive_test_" + args(0) + ".txt"
 
         // Spark session
         // Create spark configuration
