@@ -33,7 +33,7 @@ object CreateEdgesHive {
 
         // Spark session
         // Create spark configuration
-        val sparkConf = new SparkConf().setAppName("Create Edges Hive")
+        val sparkConf = new SparkConf().setAppName("Create Edges Hive Test no. " + args(0))
 
         // Create spark context
         val sc = new SparkContext(sparkConf)

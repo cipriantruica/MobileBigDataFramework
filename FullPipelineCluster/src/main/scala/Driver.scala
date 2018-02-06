@@ -30,7 +30,7 @@ object Driver {
       1)
 
     // Create spark configuration
-    val sparkConf = new SparkConf().setAppName("Louvain with Hive for date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    val sparkConf = new SparkConf().setAppName("Louvain with Hive Test no. " + args(0) + " for date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)

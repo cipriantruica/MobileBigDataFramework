@@ -20,7 +20,7 @@ object LinkFilteringHive {
 
         // Spark session
         // Create spark configuration
-        val sparkConf = new SparkConf().setAppName("Link Filtering Hive")
+        val sparkConf = new SparkConf().setAppName("Link Filtering Hive Test no. " + args(0))
 
         // Create spark context
         val sc = new SparkContext(sparkConf)
