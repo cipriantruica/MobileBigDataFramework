@@ -69,6 +69,8 @@ object Driver {
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
     pw.println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
+    println("Louvain with Hive Test no. " + args(0) + " for date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    println("Elaspsed time (ms): " + ((t1 - t0)/1e6))
     pw.println("*************************************************")
 
     pw.close()
