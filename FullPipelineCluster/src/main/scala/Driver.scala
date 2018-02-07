@@ -18,11 +18,14 @@ object Driver {
     var alphaThreshold = args(1)
     // a constant for changing the edge cost factor
     var edgeCostFactor = args(2)
+    var noTables = args(3).toInt // use EdgesAlpha table or Edges + LinkFiltering tables
     val config = LouvainConfig(
       "mi2mi",
       "edges",
       "LinkFiltering",
-      "LouvainCommunity", // this table must be created manualy in Hive
+      "EdgesAlpha",
+      "LouvainCommunity", 
+      noTables,
       date,
       alphaThreshold,
       edgeCostFactor,
