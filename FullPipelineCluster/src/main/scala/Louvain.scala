@@ -26,15 +26,18 @@ class Louvain() extends Serializable{
       alphaTbl.createOrReplaceTempView(config.hiveInputTableAlpha)
       // select sid1, sid2, & edgecost for a date and a alpha threshold
       val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTable + " e where MilanoDate = '" + config.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from " + config.hiveInputTableAlpha + " where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + config.dateInput + "')")
+      // select sid1, sid2, & edgecost for a date and NO alpha threshold
+      // val edgesTbl = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "'")
+      ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
     }
     else{
       val edgesAlphaTbl = hc.table(config.hiveSchema + "." + config.hiveInputTableEdgesAlpha)
       val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTableEdgesAlpha + " e where MilanoDate = '" + config.dateInput + "' and alpha <= " + config.alphaThreshold)
-    }
-    // select sid1, sid2, & edgecost for a date and NO alpha threshold
-    // val edgesTbl = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "'")
-    ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
+      // select sid1, sid2, & edgecost for a date and NO alpha threshold
+      // val edgesTbl = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "'")
+      ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
 
+    }
   }
 
   /**
