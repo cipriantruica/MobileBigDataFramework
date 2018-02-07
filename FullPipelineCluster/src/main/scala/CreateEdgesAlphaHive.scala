@@ -40,8 +40,9 @@ object CreateEdgesAlphaHive {
     hc.sql("drop table if exists mi2mi.edgesalpha")
         
     val edgesQuery = "(select Date MilanoDate, SID1, SID2, sum(DIS) EdgeCost from (select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID1 SID1, SquareID2 SID2, DIS from mi2mi_table where SquareID1 <= SquareID2 union all select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID2, SquareID1, DIS from mi2mi_table where SquareID1 > SquareID2) group by Date, SID1, SID2 order by Date, SID1, SID2)"
-    val alphaQuery = "select MilanoDate, sid1, sid2, EdgeCost, pow(1 - EdgeCost/(select sum(EdgeCost) node_strength from " + edgesQuery + " where sid1 != sid2 and MilanoDate=e.MilanoDate and sid1 = e.sid1 group by sid1), (select count(distinct sid1) - 1 from " + edgesQuery + " where MilanoDate=e.MilanoDate)) alpha from " + edgesQuery + " e where sid1 != sid2"
-    
+    // val alphaQuery = "select MilanoDate, sid1, sid2, EdgeCost, pow(1 - EdgeCost/(select sum(EdgeCost) node_strength from " + edgesQuery + " where sid1 != sid2 and MilanoDate=e.MilanoDate and sid1 = e.sid1 group by sid1), (select count(distinct sid1) - 1 from " + edgesQuery + " where MilanoDate=e.MilanoDate)) alpha from " + edgesQuery + " e where sid1 != sid2"
+    val alphaQuery = "select MilanoDate, sid1, sid2, EdgeCost, pow(1 - EdgeCost/(select sum(EdgeCost) node_strength from edges where sid1 != sid2 and MilanoDate=e.MilanoDate and sid1 = e.sid1 group by sid1), (select count(distinct sid1) - 1 from edges where MilanoDate=e.MilanoDate)) alpha from edges e where sid1 != sid2"
+
     // PrintWriter
     import java.io._
     val pw = new PrintWriter(new File(printFile))
@@ -58,7 +59,9 @@ object CreateEdgesAlphaHive {
     df.createOrReplaceTempView("mi2mi_table")
 
     // create the edges and save them to parquet files
-    val sqlEdges = hc.sql(alphaQuery).write.format("orc").saveAsTable("mi2mi.edgesalpha")
+    // val sqlEdges = hc.sql(alphaQuery).write.format("orc").saveAsTable("mi2mi.edgesalpha")
+    hc.sql(edgesQuery).createOrReplaceTempView("edges")
+    hc.sql(alphaQuery).write.format("orc").saveAsTable("mi2mi.edgesalpha")
 
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
