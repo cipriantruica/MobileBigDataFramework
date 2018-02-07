@@ -17,7 +17,7 @@ import org.apache.spark.sql.hive.HiveContext
 
 class Louvain() extends Serializable{
   def getEdgeRDD(sc: SparkContext, hc: HiveContext, config: LouvainConfig, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
-    if (config.noTables = 2) {
+    if (config.noTables == 2) {
       // read the data from the Hive (mi2mi - is the database name, edges is the table name)
       val edgesTbl = hc.table(config.hiveSchema + "." + config.hiveInputTable)
       // register the table so it can be used in SQL
