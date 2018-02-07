@@ -52,7 +52,7 @@ object LinkFilteringHive {
     // the following SQL query is used compute alpha for the entire data set and the results are stored in Hive
     // (currently in Hive are stored only the data for November)
     // see the ties_query.sql for the query explanations
-    val ties = hc.sql("select MilanoDate, sid1, sid2, pow(1 - EdgeCost/(select sum(EdgeCost) node_strength from edges where sid1 != sid2 and MilanoDate=e.MilanoDate and sid1 = e.sid1 group by sid1), (select count(distinct sid1) - 1 from edges where MilanoDate=e.MilanoDate)) alpha from edges e where sid1 != sid2 order by MilanoDate, sid1, sid2")
+    val ties = hc.sql("select MilanoDate, sid1, sid2, pow(1 - EdgeCost/(select sum(EdgeCost) node_strength from edges where sid1 != sid2 and MilanoDate=e.MilanoDate and sid1 = e.sid1 group by sid1), (select count(distinct sid1) - 1 from edges where MilanoDate=e.MilanoDate)) alpha from edges e where sid1 != sid2")
     ties.write.format("orc").saveAsTable("LinkFiltering")
 
     // tried a filter for alpha_threshold == 0.5
