@@ -63,6 +63,7 @@ object CreateEdgesAlphaHive {
         val sqlEdges = hc.sql(alphaQuery)
             .write.format("orc").saveAsTable("mi2mi.edgesalpha")
 
+
         val t1 = System.nanoTime()
         pw.println("End time: " + Calendar.getInstance().getTime())
         pw.println("Elapsed time (ms): " + ((t1 - t0)/1e6))
