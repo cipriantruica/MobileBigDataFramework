@@ -28,7 +28,7 @@ object Driver {
       2000,
       1)
     // the file with the mearsuments
-    val printFile = "./results/runtime_LMH_" + date + "_noTbls_" + noTables + "_test_" + args(4) + ".txt"
+    val printFile = "./results/runtime_LMH_" + date + "_noTbls_" + noTables + "_test_" + args(4) + "_alphaThreshold_" + config.alphaThreshold + "_edgeCostFactor_" + config.edgeCostFactor + ".txt"
     // Create spark configuration
     val sparkConf = new SparkConf().setAppName("Louvain with Hive Test no. " + args(4) + " for " + noTables + " tables with date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
 

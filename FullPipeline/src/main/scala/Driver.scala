@@ -28,10 +28,10 @@ object Driver {
       2000,
       1)
     // the file with the mearsuments
-    val printFile = "./results/runtime_LMH_" + date + "_noTbls_" + noTables + "_test_" + args(4) + ".txt"
+    val printFile = "./results/runtime_LMH_" + date + "_noTbls_" + noTables + "_test_" + args(4) + "_alphaThreshold_" + config.alphaThreshold + "_edgeCostFactor_" + config.edgeCostFactor + ".txt"
 
     // Create spark configuration
-    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("Louvain w/ Hive v1 date:" + date)
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("Louvain with Hive Test no. " + args(4) + " for " + noTables + " tables with date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)
@@ -69,7 +69,7 @@ object Driver {
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
     pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
-    println("Louvain with Hive Test no. " + args(4) + " for date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    println("Louvain with Hive Test no. " + args(4) + " for " + noTables + " tables with date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
     println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 
