@@ -1,16 +1,13 @@
-
 import java.util.Calendar
 
-import org.apache.spark.graphx.{Edge, Graph}
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.{SparkConf, SparkContext}
 
 
 object Driver {
 
-  def main(args: Array[String]): Unit ={
-    
+  def main(args: Array[String]): Unit = {
+
     // the day for wich we compute louvain modularity
     var date = args(0)
     // the alpha threshold filter value
@@ -23,7 +20,7 @@ object Driver {
       "edges",
       "linkfiltering",
       "edgesalpha",
-      "louvaincommunity", 
+      "louvaincommunity",
       noTables,
       date,
       alphaThreshold,
@@ -57,22 +54,22 @@ object Driver {
     val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
     // register the table so it can be used in SQL
     louvainTbl.createOrReplaceTempView(config.hiveOutputTable)
-    val exists = hc.sql("select count(MilanoDate) from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and edgeCostFactor = " + config.edgeCostFactor + " and alphaThreshold = " + config.alphaThreshold + " * 1000" )
-    
-    if(exists.first().getLong(0) == 0){
+    val exists = hc.sql("select count(MilanoDate) from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and edgeCostFactor = " + config.edgeCostFactor + " and alphaThreshold = " + config.alphaThreshold + " * 1000")
+
+    if (exists.first().getLong(0) == 0) {
       val louvain = new Louvain()
-      louvain.run(sc, hc, config)  
+      louvain.run(sc, hc, config)
     }
-    else{
+    else {
       println("already computer for MilanoDate = " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
       pw.println("already computer for MilanoDate = " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
     }
 
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
-    pw.println("Elapsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     println("Louvain with Hive Test no. " + args(4) + " for date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
-    println("Elapsed time (ms): " + ((t1 - t0)/1e6))
+    println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 
     pw.close()
