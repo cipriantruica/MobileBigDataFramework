@@ -10,8 +10,7 @@ import org.apache.spark.sql.hive.HiveContext
 object Driver {
 
   def main(args: Array[String]): Unit ={
-    // the file with the mearsuments
-    val printFile = "./results/runtime_Louvain_Modularity_Hive_test_" + args(4) + ".txt"
+    
     // the day for wich we compute louvain modularity
     var date = args(0)
     // the alpha threshold filter value
@@ -31,7 +30,8 @@ object Driver {
       edgeCostFactor,
       2000,
       1)
-
+    // the file with the mearsuments
+    val printFile = "./results/runtime_LMH_" + date + "_noTbls_" + noTables + "_test_" + args(4) + ".txt"
     // Create spark configuration
     val sparkConf = new SparkConf().setAppName("Louvain with Hive Test no. " + args(0) + " for date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
 
@@ -41,6 +41,7 @@ object Driver {
     val hc = new HiveContext(sc)
 
     // create the table if it doesn't exists
+    hc.sql("DROP TABLE IF EXISTS " + config.hiveSchema + "." + config.hiveOutputTable)
     hc.sql("CREATE TABLE IF NOT EXISTS " + config.hiveSchema + "." + config.hiveOutputTable + "(MilanoDate date, SID1 int, community int, level int, alphaThreshold int, edgeCostFactor int)")
 
     // PrintWriter
