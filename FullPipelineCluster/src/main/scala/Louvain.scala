@@ -61,6 +61,7 @@ class Louvain() extends Serializable {
       // select sid1, sid2, & edgecost for a date and a alpha threshold
       val query = "select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTable + " e where MilanoDate = '" + config.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from " + config.hiveInputTableAlpha + " where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + config.dateInput + "')"
       val ties = hc.sql(query)
+      ties.show()
 //      return ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
       ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
 //    }
