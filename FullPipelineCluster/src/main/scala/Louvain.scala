@@ -8,6 +8,7 @@ import org.apache.spark.sql.hive.HiveContext
 
 class Louvain() extends Serializable {
   def run[VD: ClassTag](sc: SparkContext, hc: HiveContext, config: LouvainConfig): Unit = {
+
     val edgeRDD = getEdgeRDD(sc, hc, config)
     val initialGraph = Graph.fromEdges(edgeRDD, None)
     var louvainGraph = createLouvainGraph(initialGraph)
@@ -60,7 +61,7 @@ class Louvain() extends Serializable {
       // select sid1, sid2, & edgecost for a date and a alpha threshold
       val query = "select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTable + " e where MilanoDate = '" + config.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from " + config.hiveInputTableAlpha + " where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + config.dateInput + "')"
       val ties = hc.sql(query)
-      ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
+      return ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
     }
     else {
       val edgesAlphaTbl = hc.table(config.hiveSchema + "." + config.hiveInputTableEdgesAlpha)
@@ -68,7 +69,7 @@ class Louvain() extends Serializable {
       // select sid1, sid2, & edgecost for a date and NO alpha threshold
       val query = "select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTableEdgesAlpha + " e where MilanoDate = '" + config.dateInput + "' and alpha <= " + config.alphaThreshold
       val ties = hc.sql(query)
-      ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
+      return ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
     }
 
 
