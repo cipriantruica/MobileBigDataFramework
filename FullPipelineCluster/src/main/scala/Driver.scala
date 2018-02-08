@@ -18,7 +18,7 @@ object Driver {
     var alphaThreshold = args(1)
     // a constant for changing the edge cost factor
     var edgeCostFactor = args(2)
-    var noTables = args(3).toInt // use EdgesAlpha table or Edges + LinkFiltering tables
+    var noTables = args(3).toInt // use 1 for  EdgesAlpha table or 2 for Edges + LinkFiltering tables
     val config = LouvainConfig(
       "mi2mi",
       "edges",

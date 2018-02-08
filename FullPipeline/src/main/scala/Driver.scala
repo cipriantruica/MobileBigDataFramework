@@ -15,10 +15,10 @@ object Driver {
     // the day for wich we compute louvain modularity
     var date = "2013-11-01" // args(0)
     // the alpha threshold filter value
-    var alphaThreshold = "0.005"
+    var alphaThreshold = "0.005" //agrs(1)
     // a constant for changing the edge cost factor
-    var edgeCostFactor = "1000000"
-    var noTables = 1 // use EdgesAlpha table or Edges + LinkFiltering tables
+    var edgeCostFactor = "1000000" //args(2)
+    var noTables = 1 // args(3).toInt // use 1 for EdgesAlpha table or 2 for Edges + LinkFiltering tables
     val config = LouvainConfig(
       "mi2mi",
       "edges",
