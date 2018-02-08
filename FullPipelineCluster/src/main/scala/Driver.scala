@@ -21,9 +21,9 @@ object Driver {
     val config = LouvainConfig(
       "mi2mi",
       "edges",
-      "LinkFiltering",
-      "EdgesAlpha",
-      "LouvainCommunity", 
+      "linkfiltering",
+      "edgesalpha",
+      "louvaincommunity", 
       noTables,
       date,
       alphaThreshold,
