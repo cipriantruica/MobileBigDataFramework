@@ -25,7 +25,7 @@ do
 
       for i in `seq 1 10`
       do
-        spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class Driver $JAR_FILE $date $ALPHA $ECF $NO_TBL $i >> "results/output_LMH_"$NO_TBL"TBL_"$date
+        spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class Driver $JAR_FILE $date $ALPHA $ECF $NO_TBL $i >> "results/output_LMH_"$NO_TBL"TBL_"$date"_alpha_"$ALPHA"_ECF_"$ECF
         sleep 10
     done;
   done;
