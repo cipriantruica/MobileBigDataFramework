@@ -1,0 +1,5 @@
+Link Filtering Hive
+Start time: Thu Feb 08 02:14:14 EET 2018
+End time: Thu Feb 08 02:22:58 EET 2018
+Elapsed time (ms): 524262.088514
+*************************************************

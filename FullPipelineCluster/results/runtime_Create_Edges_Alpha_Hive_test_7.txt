@@ -1,0 +1,5 @@
+Create Edges Hive
+Start time: Thu Feb 08 10:55:47 EET 2018
+End time: Thu Feb 08 12:14:22 EET 2018
+Elapsed time (ms): 4715216.943752
+*************************************************
