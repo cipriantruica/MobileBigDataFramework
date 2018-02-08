@@ -71,8 +71,6 @@ class Louvain() extends Serializable {
       val ties = hc.sql(query)
       ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
     }
-
-
   }
 
   /**

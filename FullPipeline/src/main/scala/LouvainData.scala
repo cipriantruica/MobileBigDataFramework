@@ -1,12 +1,11 @@
 import com.esotericsoftware.kryo.io.{Input, Output}
-import com.esotericsoftware.kryo.serializers.DefaultArraySerializers.ObjectArraySerializer
 import com.esotericsoftware.kryo.{Kryo, KryoSerializable}
 
 class LouvainData(var community: Long,
-  var communitySigmaTot: Long,
-  var internalWeight: Long,
-  var nodeWeight: Long,
-  var changed: Boolean) extends Serializable with KryoSerializable {
+                  var communitySigmaTot: Long,
+                  var internalWeight: Long,
+                  var nodeWeight: Long,
+                  var changed: Boolean) extends Serializable with KryoSerializable {
 
   def this() = this(-1L, 0L, 0L, 0L, false)
 

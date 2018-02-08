@@ -1,11 +1,7 @@
 
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types._
-import org.apache.spark.sql.hive.HiveContext
 
+import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 
 /*
@@ -25,7 +21,7 @@ object LinkFilteringHive {
     val sc = new SparkContext(sparkConf)
     // Create Hive context
     val hc = new HiveContext(sc)
-    
+
     // dropt the table if it exists
     hc.sql("drop table if exists LinkFiltering")
 
@@ -60,7 +56,9 @@ object LinkFilteringHive {
 
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
-    pw.println("Elapsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
+    println("Create Edges Hive Test no. " + args(0))
+    println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 
     pw.close()
