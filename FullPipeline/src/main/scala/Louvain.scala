@@ -17,18 +17,27 @@ import org.apache.spark.sql.hive.HiveContext
 
 class Louvain() extends Serializable{
   def getEdgeRDD(sc: SparkContext, hc: HiveContext, config: LouvainConfig, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
-    // read the data from the Hive (mi2mi - is the database name, edges is the table name)
-    val edgesTbl = hc.table(config.hiveInputTable)
-    // register the table so it can be used in SQL
-    edgesTbl.createOrReplaceTempView(config.hiveInputTable)
-    val alphaTbl = hc.table(config.hiveInputTableAlpha)
-    alphaTbl.createOrReplaceTempView(config.hiveInputTableAlpha)
-    // select sid1, sid2, & edgecost for a date and a alpha threshold
-    val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from LinkFiltering where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + config.dateInput + "')")
-    // select sid1, sid2, & edgecost for a date and NO alpha threshold
-    // val edgesTbl = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "'")
-    ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
+    if (config.noTables == 2) {
+      // read the data from the Hive (mi2mi - is the database name, edges is the table name)
+      val edgesTbl = hc.table(config.hiveInputTable)
+      // register the table so it can be used in SQL
+      edgesTbl.createOrReplaceTempView(config.hiveInputTable)
+      val alphaTbl = hc.table(config.hiveInputTableAlpha)
+      alphaTbl.createOrReplaceTempView(config.hiveInputTableAlpha)
+      // select sid1, sid2, & edgecost for a date and a alpha threshold
+      val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTable + " e where MilanoDate = '" + config.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from " + config.hiveInputTableAlpha + " where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + config.dateInput + "')")
+      // select sid1, sid2, & edgecost for a date and NO alpha threshold
+      // val edgesTbl = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "'")
+      ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
+    }
+    else{
+      val edgesAlphaTbl = hc.table(config.hiveInputTableEdgesAlpha)
+      val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTableEdgesAlpha + " e where MilanoDate = '" + config.dateInput + "' and alpha <= " + config.alphaThreshold)
+      // select sid1, sid2, & edgecost for a date and NO alpha threshold
+      // val edgesTbl = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "'")
+      ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
 
+    }
   }
 
   /**
