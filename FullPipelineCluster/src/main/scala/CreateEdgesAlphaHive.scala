@@ -13,12 +13,10 @@ import org.apache.spark.{SparkConf, SparkContext}
 object CreateEdgesAlphaHive {
   def main(args: Array[String]): Unit = {
     // input directory with the tsv
-    val inputDirectory = "hdfs://hadoop-master:8020/user/ciprian/input/MI2MI/MItoMI-2013-11*"
-    // val inputDirectory = args(0)
-
+    val inputDirectory = args(0)
+    val noTest = args(1)
     // the file with the mearsuments
-    val printFile = "./results/runtime_Create_Edges_Alpha_Hive_test_" + args(0) + ".txt"
-    // val printFile = args(2)
+    val printFile = "./results/runtime_Create_Edges_Alpha_Hive_test_" + noTest + ".txt"
 
     // the tsv schema
     val fileSchema = StructType(Array(
@@ -30,7 +28,7 @@ object CreateEdgesAlphaHive {
 
     // Spark session
     // Create spark configuration
-    val sparkConf = new SparkConf().setAppName("Create Edges Alpha Hive Test no. " + args(0))
+    val sparkConf = new SparkConf().setAppName("Create Edges Alpha Hive Test no. " + noTest)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)
@@ -38,7 +36,9 @@ object CreateEdgesAlphaHive {
     val hc = new HiveContext(sc)
     // drop table if it exists
     hc.sql("drop table if exists mi2mi.edgesalpha")
-
+    /*
+    * I don't understand why edgesQuery doesn't work without order by?
+    */
     val edgesQuery = "(select Date MilanoDate, SID1, SID2, sum(DIS) EdgeCost from (select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID1 SID1, SquareID2 SID2, DIS from mi2mi_table where SquareID1 <= SquareID2 union all select cast(from_unixtime(Timestamp/1000) as Date) Date, SquareID2, SquareID1, DIS from mi2mi_table where SquareID1 > SquareID2) group by Date, SID1, SID2 order by Date, SID1, SID2)"
     // val alphaQuery = "select MilanoDate, sid1, sid2, EdgeCost, pow(1 - EdgeCost/(select sum(EdgeCost) node_strength from " + edgesQuery + " where sid1 != sid2 and MilanoDate=e.MilanoDate and sid1 = e.sid1 group by sid1), (select count(distinct sid1) - 1 from " + edgesQuery + " where MilanoDate=e.MilanoDate)) alpha from " + edgesQuery + " e where sid1 != sid2"
     val alphaQuery = "select MilanoDate, sid1, sid2, EdgeCost, pow(1 - EdgeCost/(select sum(EdgeCost) node_strength from edges where sid1 != sid2 and MilanoDate=e.MilanoDate and sid1 = e.sid1 group by sid1), (select count(distinct sid1) - 1 from edges where MilanoDate=e.MilanoDate)) alpha from edges e where sid1 != sid2"
@@ -66,7 +66,7 @@ object CreateEdgesAlphaHive {
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
     pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
-    println("Create Edges Hive Test no. " + args(0))
+    println("Create Edges Hive Test no. " + noTest)
     println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 

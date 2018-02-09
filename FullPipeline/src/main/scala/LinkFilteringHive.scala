@@ -13,7 +13,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 object LinkFilteringHive {
   def main(args: Array[String]): Unit = {
     // the file with the mearsuments
-    val printFile = "./results/runtime_Link_Filtering_Hive.txt"
+    val printFile = "./results/runtime_Link_Filtering_Hive_" + args(0) + ".txt"
     // Create spark configuration
     val sparkConf = new SparkConf().setMaster("local[*]").setAppName("Link Filtering Hive v1")
 
@@ -57,7 +57,7 @@ object LinkFilteringHive {
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
     pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
-    println("Create Edges Hive Test no. " + args(0))
+    println("Create Alphas Hive Test no. " + args(0))
     println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 

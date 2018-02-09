@@ -1,15 +1,15 @@
-import org.apache.spark.SparkContext
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.hive.HiveContext
 
 import scala.reflect.ClassTag
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.hive.HiveContext
 
 class Louvain() extends Serializable {
-  def run[VD: ClassTag](sc: SparkContext, hc: HiveContext, config: LouvainConfig): Unit = {
+  def run[VD: ClassTag](sc: SparkContext, hc: HiveContext, config: LouvainConfig, dateInput: String): Unit = {
 
-    val edgeRDD = getEdgeRDD(sc, hc, config)
+    val edgeRDD = getEdgeRDD(hc, config, dateInput)
     val initialGraph = Graph.fromEdges(edgeRDD, None)
     var louvainGraph = createLouvainGraph(initialGraph)
 
@@ -34,7 +34,7 @@ class Louvain() extends Serializable {
 
       qValues = qValues :+ ((compressionLevel, currentQModularityValue))
 
-      saveLevel(sc, hc, config, compressionLevel, qValues, louvainGraph)
+      saveLevel(hc, config, dateInput, compressionLevel, qValues, louvainGraph)
 
       // If modularity was increased by at least 0.001 compress the graph and repeat
       // halt immediately if the community labeling took less than 3 passes
@@ -50,24 +50,29 @@ class Louvain() extends Serializable {
     } while (!halt)
   }
 
-  def getEdgeRDD(sc: SparkContext, hc: HiveContext, config: LouvainConfig, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
+  def getEdgeRDD(hc: HiveContext, config: LouvainConfig, dateInput: String, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
+    println("******************")
+    println("******************")
+    println(dateInput)
+    println("******************")
+    println("******************")
     if (config.noTables == 2) {
       // read the data from the Hive (mi2mi - is the database name, edges is the table name)
       val edgesTbl = hc.table(config.hiveSchema + "." + config.hiveInputTable)
       // register the table so it can be used in SQL
       edgesTbl.createOrReplaceTempView(config.hiveInputTable)
-      val alphaTbl = hc.table(config.hiveSchema + "." + config.hiveInputTableAlpha)
+      val alphaTbl = hc.table(config.hiveInputTableAlpha)
       alphaTbl.createOrReplaceTempView(config.hiveInputTableAlpha)
       // select sid1, sid2, & edgecost for a date and a alpha threshold
-      val query = "select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTable + " e where MilanoDate = '" + config.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from " + config.hiveInputTableAlpha + " where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + config.dateInput + "')"
+      val query = "select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTable + " e where MilanoDate = '" + dateInput + "' and (sid1, sid2) in (select sid1, sid2 from " + config.hiveInputTableAlpha + " where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + dateInput + "')"
       val ties = hc.sql(query)
       ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
     }
     else {
-      val edgesAlphaTbl = hc.table(config.hiveSchema + "." + config.hiveInputTableEdgesAlpha)
+      val edgesAlphaTbl = hc.table(config.hiveInputTableEdgesAlpha)
       edgesAlphaTbl.createOrReplaceTempView(config.hiveInputTableEdgesAlpha)
       // select sid1, sid2, & edgecost for a date and NO alpha threshold
-      val query = "select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTableEdgesAlpha + " e where MilanoDate = '" + config.dateInput + "' and alpha <= " + config.alphaThreshold
+      val query = "select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTableEdgesAlpha + " e where MilanoDate = '" + dateInput + "' and alpha <= " + config.alphaThreshold
       val ties = hc.sql(query)
       ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
     }
@@ -424,9 +429,9 @@ class Louvain() extends Serializable {
   }
 
   def saveLevel(
-                 sc: SparkContext,
                  hc: HiveContext,
                  config: LouvainConfig,
+                 dateInput: String,
                  level: Int,
                  qValues: Array[(Int, Long)],
                  graph: Graph[LouvainData, Long]) = {
@@ -434,11 +439,11 @@ class Louvain() extends Serializable {
     val alphaThreshold = config.alphaThreshold.toFloat * 1000
     val vertexRDD = graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
-      (config.dateInput, vertexId, louvainData.community, level, alphaThreshold.toInt, config.edgeCostFactor.toInt)
+      (dateInput, vertexId, louvainData.community, level, alphaThreshold.toInt, config.edgeCostFactor.toInt)
     })
 
     val df = hc.createDataFrame(vertexRDD) //, fileSchema)
 
-    df.write.format("orc").mode("append").insertInto(config.hiveSchema + "." + config.hiveOutputTable)
+    df.write.format("orc").mode("append").insertInto(config.hiveOutputTable)
   }
 }

@@ -16,7 +16,7 @@ object CreateEdgesHive {
     // val inputDirectory = "hdfs://localhost:9000/user/sheepman/input/MI2MI/MItoMI-2013-11*"
     val inputDirectory = "file:///home/sheepman/DATA_SETS/MItoMI-2013-11*"
     // the file with the mearsuments
-    val printFile = "./results/runtime_Create_Edges_Hive.txt"
+    val printFile = "./results/runtime_Create_Edges_Hive_" + args(0) + ".txt"
     // the tsv schema
     val fileSchema = StructType(Array(
       StructField("Timestamp", LongType, true),

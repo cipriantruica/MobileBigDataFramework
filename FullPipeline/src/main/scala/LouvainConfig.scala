@@ -5,7 +5,6 @@ case class LouvainConfig(
                           hiveInputTableEdgesAlpha: String,
                           hiveOutputTable: String,
                           noTables: Int,
-                          dateInput: String,
                           alphaThreshold: String,
                           edgeCostFactor: String,
                           minimumCompressionProgress: Int,
