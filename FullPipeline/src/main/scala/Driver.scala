@@ -10,7 +10,7 @@ object Driver {
   def main(args: Array[String]): Unit = {
 
     // the day for wich we compute louvain modularity
-    var dateInput = "2011-01-11" //args(0)
+    var dateInput = "2013-11-01" //args(0)
     // the alpha threshold filter value
     var alphaThreshold = "0.05" //args(1)
     // a constant for changing the edge cost factor
