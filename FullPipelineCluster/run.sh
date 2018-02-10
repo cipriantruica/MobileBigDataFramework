@@ -18,10 +18,10 @@ do
 	sleep 10
 
 	# build the linkfiltering table in Hive
-	spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class LinkFilteringHive $JAR_FILE $INPUT_DATA $i >> "results/output_LinkFilteringHive"
+	spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class LinkFilteringHive $JAR_FILE $i >> "results/output_LinkFilteringHive"
 	sleep 10
 
     # build edgesalpha table that stores both edges and linkfiletering in one table in Hive
-	spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class CreateEdgesAlphaHive $JAR_FILE $INPUT_DATA $i >> "results/output_CreateEdgesAlphaHive"
+	spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class CreateEdgesAlphaHive $JAR_FILE $i >> "results/output_CreateEdgesAlphaHive"
 	sleep 10
 done;

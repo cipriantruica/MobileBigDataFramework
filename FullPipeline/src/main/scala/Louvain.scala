@@ -1,10 +1,10 @@
+import org.apache.spark.SparkContext
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.hive.HiveContext
 
 import scala.reflect.ClassTag
-import org.apache.spark.SparkContext
-import org.apache.spark.sql.hive.HiveContext
 
 class Louvain() extends Serializable {
   def run[VD: ClassTag](sc: SparkContext, hc: HiveContext, config: LouvainConfig, dateInput: String): Unit = {

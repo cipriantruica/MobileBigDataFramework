@@ -12,11 +12,12 @@ import org.apache.spark.{SparkConf, SparkContext}
 object LinkFilteringHive {
   def main(args: Array[String]): Unit = {
     // the file with the mearsuments
-    val printFile = "./results/runtime_Link_Filtering_Hive_test_" + args(0) + ".txt"
+    val noTest = args(0)
+    val printFile = "./results/runtime_Link_Filtering_Hive_test_" +  + ".txt"
 
     // Spark session
     // Create spark configuration
-    val sparkConf = new SparkConf().setAppName("Link Filtering Hive Test no. " + args(0))
+    val sparkConf = new SparkConf().setAppName("Link Filtering Hive Test no. " + noTest)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)
@@ -57,7 +58,7 @@ object LinkFilteringHive {
 
     pw.println("End time: " + Calendar.getInstance().getTime())
     pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
-    println("Link Filtering Hive Test no. " + args(0))
+    println("Link Filtering Hive Test no. " + noTest)
     println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 

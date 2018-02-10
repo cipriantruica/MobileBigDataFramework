@@ -30,7 +30,7 @@ object CreateEdgesAlphaHive {
 
     // Spark session
     // Create spark configuration
-    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("Create Edges Alpha Hive Test no. ")// + args(0))
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("Create Edges Alpha Hive Test no. ") // + args(0))
 
     // Create spark context
     val sc = new SparkContext(sparkConf)

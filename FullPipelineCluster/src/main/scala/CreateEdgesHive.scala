@@ -13,11 +13,12 @@ import org.apache.spark.{SparkConf, SparkContext}
 object CreateEdgesHive {
   def main(args: Array[String]): Unit = {
     // input directory with the tsv
-    val inputDirectory = "hdfs://hadoop-master:8020/user/ciprian/input/MI2MI/MItoMI-2013-11*"
-    // val inputDirectory = args(0)
+    //val inputDirectory = "hdfs://hadoop-master:8020/user/ciprian/input/MI2MI/MItoMI-2013-11*"
+    val inputDirectory = args(0)
 
     // the file with the mearsuments
-    val printFile = "./results/runtime_Create_Edges_Hive_test_" + args(0) + ".txt"
+    val noTest = args(1)
+    val printFile = "./results/runtime_Create_Edges_Hive_test_" + noTest + ".txt"
     // val printFile = args(2)
 
     // the tsv schema
@@ -29,7 +30,7 @@ object CreateEdgesHive {
 
     // Spark session
     // Create spark configuration
-    val sparkConf = new SparkConf().setAppName("Create Edges Hive Test no. " + args(0))
+    val sparkConf = new SparkConf().setAppName("Create Edges Hive Test no. " + noTest)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)
@@ -64,7 +65,7 @@ object CreateEdgesHive {
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
     pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
-    println("Create Edges Hive Test no. " + args(0))
+    println("Create Edges Hive Test no. " + noTest)
     println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 
