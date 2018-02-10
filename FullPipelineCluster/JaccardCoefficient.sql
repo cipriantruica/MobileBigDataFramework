@@ -111,7 +111,7 @@ from
 group by c.MilanoDate, c.SID1, c.SID2
 
 -- Jaccard Coefficient for (node1,node2)
-select d1.MilanoDate, d1.node1, d2.node2, d1.sum_mins/d2.sum_maxs jaccard_coefficient
+select d1.MilanoDate, d1.SID1, d2.SID2, d1.sum_mins/d2.sum_maxs jaccard_coefficient
 from
 	(
 		select c.MilanoDate, c.SID1, c.SID2, sum(c.mins) sum_mins 
@@ -226,4 +226,4 @@ inner join
 			) c 
 		group by c.MilanoDate, c.SID1, c.SID2
 	) d2
-	on d1.node1 = d2.node1 and d1.node2 = d2.node2 and d1.MilanoDate = d2.MilanoDate;
+	on d1.SID1 = d2.SID1 and d1.SID2 = d2.SID2 and d1.MilanoDate = d2.MilanoDate;
