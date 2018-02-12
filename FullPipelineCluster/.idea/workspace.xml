@@ -29,11 +29,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="JaccardCoefficient.scala" pinned="false" current-in-tab="true">
+      <file leaf-file-name="JaccardCoefficient.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/JaccardCoefficient.scala">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="211">
               <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JaccardCoefficient.sql" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/JaccardCoefficient.sql">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="7" column="88" lean-forward="false" selection-start-line="7" selection-start-column="83" selection-end-line="7" selection-end-column="88" />
               <folding />
             </state>
           </provider>
@@ -91,6 +101,7 @@
         <option value="$PROJECT_DIR$/src/main/scala/CreateEdgesHive.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/LinkFilteringHive.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/JaccardCoefficient.scala" />
+        <option value="$PROJECT_DIR$/JaccardCoefficient.sql" />
       </list>
     </option>
   </component>
@@ -516,6 +527,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="211">
           <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JaccardCoefficient.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="88" lean-forward="false" selection-start-line="7" selection-start-column="83" selection-end-line="7" selection-end-column="88" />
           <folding />
         </state>
       </provider>

@@ -5,15 +5,15 @@ from
 		select b.MilanoDate, b.SID1, b.SID2, b.common_node, min(b.EdgeCost) mins 
 		from 
 		(
-			select g1.MilanoDate, g1.SID1, g1.SID2, a.common_node, a.EdgeCost from graph g1 
+			select g1.MilanoDate, g1.SID1, g1.SID2, a.common_node, a.EdgeCost from edges g1
 			inner join 
 				(
 					select t.MilanoDate, t.SID2 common_node, t.SID1, t.EdgeCost 
 					from 
 						(
-							select MilanoDate, SID1, SID2, EdgeCost from graph 
+							select MilanoDate, SID1, SID2, EdgeCost from edges
 							union all 
-							select MilanoDate, SID2, SID1, EdgeCost from graph
+							select MilanoDate, SID2, SID1, EdgeCost from edges
 						) t
 				) a 
 			on 
@@ -26,9 +26,9 @@ from
 					select t1.SID2 , t1.MilanoDate
 					from 
 						(
-							select MilanoDate, SID1, SID2 from graph 
+							select MilanoDate, SID1, SID2 from edges
 							union all 
-							select MilanoDate, SID2, SID1 from graph
+							select MilanoDate, SID2, SID1 from edges
 						) t1 
 					where 
 						t1.SID1 = g1.SID1 
@@ -41,9 +41,9 @@ from
 					select t1.SID2, t1.MilanoDate
 					from 
 						(
-							select MilanoDate, SID1, SID2 from graph 
+							select MilanoDate, SID1, SID2 from edges
 							union all 
-							select MilanoDate, SID2, SID1 from graph
+							select MilanoDate, SID2, SID1 from edges
 						) t1 
 					where t1.SID1 = g1.SID2 
 					and 
@@ -61,15 +61,15 @@ from
 		select b.MilanoDate, b.SID1, b.SID2, b.common_node, max(b.EdgeCost) max
 		from 
 		(
-			select g1.MilanoDate, g1.SID1, g1.SID2, a.common_node, a.EdgeCost from graph g1 
+			select g1.MilanoDate, g1.SID1, g1.SID2, a.common_node, a.EdgeCost from edges g1
 			inner join 
 				(
 					select t.MilanoDate, t.SID2 common_node, t.SID1, t.EdgeCost 
 					from 
 						(
-							select MilanoDate, SID1, SID2, EdgeCost from graph 
+							select MilanoDate, SID1, SID2, EdgeCost from edges
 							union all 
-							select MilanoDate, SID2, SID1, EdgeCost from graph
+							select MilanoDate, SID2, SID1, EdgeCost from edges
 						) t
 				) a 
 			on 
@@ -82,9 +82,9 @@ from
 					select t1.SID2 , t1.MilanoDate
 					from 
 						(
-							select MilanoDate, SID1, SID2 from graph 
+							select MilanoDate, SID1, SID2 from edges
 							union all 
-							select MilanoDate, SID2, SID1 from graph
+							select MilanoDate, SID2, SID1 from edges
 						) t1 
 					where 
 						t1.SID1 = g1.SID1 
@@ -97,9 +97,9 @@ from
 					select t1.SID2, t1.MilanoDate
 					from 
 						(
-							select MilanoDate, SID1, SID2 from graph 
+							select MilanoDate, SID1, SID2 from edges
 							union all 
-							select MilanoDate, SID2, SID1 from graph
+							select MilanoDate, SID2, SID1 from edges
 						) t1 
 					where t1.SID1 = g1.SID2 
 					and 
@@ -120,15 +120,15 @@ from
 				select b.MilanoDate, b.SID1, b.SID2, b.common_node, min(b.EdgeCost) mins 
 				from 
 				(
-					select g1.MilanoDate, g1.SID1, g1.SID2, a.common_node, a.EdgeCost from graph g1 
+					select g1.MilanoDate, g1.SID1, g1.SID2, a.common_node, a.EdgeCost from edges g1
 					inner join 
 						(
 							select t.MilanoDate, t.SID2 common_node, t.SID1, t.EdgeCost 
 							from 
 								(
-									select MilanoDate, SID1, SID2, EdgeCost from graph 
+									select MilanoDate, SID1, SID2, EdgeCost from edges
 									union all 
-									select MilanoDate, SID2, SID1, EdgeCost from graph
+									select MilanoDate, SID2, SID1, EdgeCost from edges
 								) t
 						) a 
 					on 
@@ -141,9 +141,9 @@ from
 							select t1.SID2 , t1.MilanoDate
 							from 
 								(
-									select MilanoDate, SID1, SID2 from graph 
+									select MilanoDate, SID1, SID2 from edges
 									union all 
-									select MilanoDate, SID2, SID1 from graph
+									select MilanoDate, SID2, SID1 from edges
 								) t1 
 							where 
 								t1.SID1 = g1.SID1 
@@ -156,9 +156,9 @@ from
 							select t1.SID2, t1.MilanoDate
 							from 
 								(
-									select MilanoDate, SID1, SID2 from graph 
+									select MilanoDate, SID1, SID2 from edges
 									union all 
-									select MilanoDate, SID2, SID1 from graph
+									select MilanoDate, SID2, SID1 from edges
 								) t1 
 							where t1.SID1 = g1.SID2 
 							and 
@@ -177,15 +177,15 @@ inner join
 				select b.MilanoDate, b.SID1, b.SID2, b.common_node, max(b.EdgeCost) max
 				from 
 				(
-					select g1.MilanoDate, g1.SID1, g1.SID2, a.common_node, a.EdgeCost from graph g1 
+					select g1.MilanoDate, g1.SID1, g1.SID2, a.common_node, a.EdgeCost from edges g1
 					inner join 
 						(
 							select t.MilanoDate, t.SID2 common_node, t.SID1, t.EdgeCost 
 							from 
 								(
-									select MilanoDate, SID1, SID2, EdgeCost from graph 
+									select MilanoDate, SID1, SID2, EdgeCost from edges
 									union all 
-									select MilanoDate, SID2, SID1, EdgeCost from graph
+									select MilanoDate, SID2, SID1, EdgeCost from edges
 								) t
 						) a 
 					on 
@@ -198,9 +198,9 @@ inner join
 							select t1.SID2 , t1.MilanoDate
 							from 
 								(
-									select MilanoDate, SID1, SID2 from graph 
+									select MilanoDate, SID1, SID2 from edges
 									union all 
-									select MilanoDate, SID2, SID1 from graph
+									select MilanoDate, SID2, SID1 from edges
 								) t1 
 							where 
 								t1.SID1 = g1.SID1 
@@ -213,9 +213,9 @@ inner join
 							select t1.SID2, t1.MilanoDate
 							from 
 								(
-									select MilanoDate, SID1, SID2 from graph 
+									select MilanoDate, SID1, SID2 from edges
 									union all 
-									select MilanoDate, SID2, SID1 from graph
+									select MilanoDate, SID2, SID1 from edges
 								) t1 
 							where t1.SID1 = g1.SID2 
 							and 
