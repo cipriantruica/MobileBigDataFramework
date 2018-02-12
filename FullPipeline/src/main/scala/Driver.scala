@@ -10,13 +10,13 @@ object Driver {
   def main(args: Array[String]): Unit = {
 
     // the day for wich we compute louvain modularity
-    var dateInput = "2013-11-01" //args(0)
+    var dateInput = args(0)
     // the alpha threshold filter value
-    var alphaThreshold = "0.05" //args(1)
+    var alphaThreshold = args(1)
     // a constant for changing the edge cost factor
-    var edgeCostFactor = "1000000" //args(2)
-    var noTables = 1 //args(3).toInt // use 1 for  EdgesAlpha table or 2 for Edges + LinkFiltering tables
-    var test_no = 1 //args(4) // this is just for testing
+    var edgeCostFactor = args(2)
+    var noTables = args(3).toInt // use 1 for  EdgesAlpha table or 2 for Edges + LinkFiltering tables
+    var test_no =  args(4) // this is just for testing
     val config = LouvainConfig(
       "mi2mi",
       "edges",
