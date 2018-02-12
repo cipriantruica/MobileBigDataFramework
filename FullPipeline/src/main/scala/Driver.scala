@@ -1,0 +1,85 @@
+
+import java.util.Calendar
+
+import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.{SparkConf, SparkContext}
+
+
+object Driver {
+
+  def main(args: Array[String]): Unit = {
+
+    // the day for wich we compute louvain modularity
+    var dateInput = "2013-11-01" //args(0)
+    // the alpha threshold filter value
+    var alphaThreshold = "0.05" //args(1)
+    // a constant for changing the edge cost factor
+    var edgeCostFactor = "1000000" //args(2)
+    var noTables = 1 //args(3).toInt // use 1 for  EdgesAlpha table or 2 for Edges + LinkFiltering tables
+    var test_no = 1 //args(4) // this is just for testing
+    val config = LouvainConfig(
+      "mi2mi",
+      "edges",
+      "linkfiltering",
+      "edgesalpha",
+      "louvaincommunity",
+      noTables,
+      alphaThreshold,
+      edgeCostFactor,
+      2000,
+      1)
+    // the file with the mearsuments
+    val printFile = "./results/runtime_LMH_" + dateInput + "_noTbls_" + noTables + "_test_" + test_no + "_alphaThreshold_" + config.alphaThreshold + "_edgeCostFactor_" + config.edgeCostFactor + ".txt"
+    // Create spark configuration
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("Louvain with Hive Test no. " + test_no + " for " + noTables + " tables with date: " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+
+    // Create spark context
+    val sc = new SparkContext(sparkConf)
+    // Create Hive context
+    val hc = new HiveContext(sc)
+
+    // create the table if it doesn't exists
+    hc.sql("DROP TABLE IF EXISTS " + config.hiveOutputTable)
+    hc.sql("CREATE TABLE IF NOT EXISTS " + config.hiveOutputTable + "(MilanoDate date, SID1 int, community int, level int, alphaThreshold int, edgeCostFactor int)")
+
+    // PrintWriter
+    import java.io._
+    val pw = new PrintWriter(new File(printFile))
+
+    pw.println("Louvain with Hive Test no. " + test_no + " for " + noTables + " tables with date: " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    pw.println("Start time: " + Calendar.getInstance().getTime())
+
+    val t0 = System.nanoTime()
+
+    // verify if the louvain modularity was already computed
+    val louvainTbl = hc.table(config.hiveOutputTable)
+    // register the table so it can be used in SQL
+    louvainTbl.createOrReplaceTempView(config.hiveOutputTable)
+    val exists = hc.sql("select count(MilanoDate) from " + config.hiveOutputTable + " where MilanoDate = '" + dateInput + "' and edgeCostFactor = " + config.edgeCostFactor + " and alphaThreshold = " + config.alphaThreshold + " * 1000")
+
+    if (exists.first().getLong(0) == 0) {
+      val louvain = new Louvain()
+      louvain.run(sc, hc, config, dateInput)
+      // TO DO - make louvain for all the dates using map
+      // See how to modify the conde so that we don't send SparkContext and HiveContext to each worker!!!
+      // be carefull which table you use
+      // val edgesTbl = hc.table(config.hiveInputTable)
+      // edgesTbl.createOrReplaceTempView(config.hiveInputTable)
+      // hc.sql("select distinct MilanoDate from " + config.hiveInputTable).rdd.map(row => louvain.run(sc, hc, config, row(0).toString))
+    }
+    else {
+      println("already computer for MilanoDate = " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+      pw.println("already computer for MilanoDate = " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    }
+
+    val t1 = System.nanoTime()
+    pw.println("End time: " + Calendar.getInstance().getTime())
+    pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
+    println("Louvain with Hive Test no. " + test_no + " for " + noTables + " tables with date: " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
+    pw.println("*************************************************")
+
+    pw.close()
+
+  }
+}
