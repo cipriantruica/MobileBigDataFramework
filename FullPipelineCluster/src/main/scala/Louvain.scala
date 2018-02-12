@@ -1,22 +1,56 @@
-import scala.reflect.ClassTag
-
-import com.esotericsoftware.kryo.io.{Input, Output}
-import com.esotericsoftware.kryo.serializers.DefaultArraySerializers.ObjectArraySerializer
-import com.esotericsoftware.kryo.{Kryo, KryoSerializable}
-
-import org.apache.spark._
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
-import org.apache.spark.SparkContext._
-import org.apache.spark.graphx._
-import org.apache.spark.broadcast.Broadcast
-//import org.apache.spark.{Logging, SparkContext}
-import org.apache.spark.{SparkContext}
-import org.apache.spark.sql.types._
+
+import scala.reflect.ClassTag
+import org.apache.spark.SparkContext
 import org.apache.spark.sql.hive.HiveContext
 
-class Louvain() extends Serializable{
-  def getEdgeRDD(sc: SparkContext, hc: HiveContext, config: LouvainConfig, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
+class Louvain() extends Serializable {
+  def run[VD: ClassTag](sc: SparkContext, hc: HiveContext, config: LouvainConfig, dateInput: String): Unit = {
+
+    val edgeRDD = getEdgeRDD(hc, config, dateInput)
+    val initialGraph = Graph.fromEdges(edgeRDD, None)
+    var louvainGraph = createLouvainGraph(initialGraph)
+
+    var compressionLevel = -1 // number of times the graph has been compressed
+    var q_modularityValue = -1.0 // current modularity value
+    var halt = false
+
+    var qValues: Array[(Int, Long)] = Array()
+
+    do {
+      compressionLevel += 1
+      println(s"\nStarting Louvain level $compressionLevel")
+
+      // label each vertex with its best community choice at this level of compression
+      val (currentQModularityValue, currentGraph, numberOfPasses) =
+        louvain(sc, louvainGraph, config.minimumCompressionProgress, config.progressCounter)
+
+      louvainGraph.unpersistVertices(blocking = false)
+      louvainGraph = currentGraph
+
+      println(s"qValue: $currentQModularityValue")
+
+      qValues = qValues :+ ((compressionLevel, currentQModularityValue))
+
+      saveLevel(hc, config, dateInput, compressionLevel, qValues, louvainGraph)
+
+      // If modularity was increased by at least 0.001 compress the graph and repeat
+      // halt immediately if the community labeling took less than 3 passes
+      //println(s"if ($passes > 2 && $currentQ > $q + 0.001 )")
+      if (numberOfPasses > 2 && currentQModularityValue > q_modularityValue + 0.001) {
+        q_modularityValue = currentQModularityValue
+        louvainGraph = compressGraph(louvainGraph)
+      }
+      else {
+        halt = true
+      }
+
+    } while (!halt)
+  }
+
+  def getEdgeRDD(hc: HiveContext, config: LouvainConfig, dateInput: String, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
     if (config.noTables == 2) {
       // read the data from the Hive (mi2mi - is the database name, edges is the table name)
       val edgesTbl = hc.table(config.hiveSchema + "." + config.hiveInputTable)
@@ -25,31 +59,30 @@ class Louvain() extends Serializable{
       val alphaTbl = hc.table(config.hiveSchema + "." + config.hiveInputTableAlpha)
       alphaTbl.createOrReplaceTempView(config.hiveInputTableAlpha)
       // select sid1, sid2, & edgecost for a date and a alpha threshold
-      val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTable + " e where MilanoDate = '" + config.dateInput + "' and (sid1, sid2) in (select sid1, sid2 from " + config.hiveInputTableAlpha + " where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + config.dateInput + "')")
-      // select sid1, sid2, & edgecost for a date and NO alpha threshold
-      // val edgesTbl = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "'")
+      val query = "select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTable + " e where MilanoDate = '" + dateInput + "' and (sid1, sid2) in (select sid1, sid2 from " + config.hiveInputTableAlpha + " where alpha <= " + config.alphaThreshold + " and MilanoDate ='" + dateInput + "')"
+      val ties = hc.sql(query)
       ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
     }
-    else{
+    else {
       val edgesAlphaTbl = hc.table(config.hiveSchema + "." + config.hiveInputTableEdgesAlpha)
-      val ties = hc.sql("select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTableEdgesAlpha + " e where MilanoDate = '" + config.dateInput + "' and alpha <= " + config.alphaThreshold)
+      edgesAlphaTbl.createOrReplaceTempView(config.hiveInputTableEdgesAlpha)
       // select sid1, sid2, & edgecost for a date and NO alpha threshold
-      // val edgesTbl = hc.sql("select sid1, sid2, round(EdgeCost * " + conf.zoomInFactor + ") ec from edges e where MilanoDate = '" + config.dateInput + "'")
+      val query = "select sid1, sid2, round(EdgeCost * " + config.edgeCostFactor + ") ec from " + config.hiveInputTableEdgesAlpha + " e where MilanoDate = '" + dateInput + "' and alpha <= " + config.alphaThreshold
+      val ties = hc.sql(query)
       ties.rdd.map(row => new Edge(typeConversionMethod(row(0).asInstanceOf[Int].toString), typeConversionMethod(row(1).asInstanceOf[Int].toString), row(2).asInstanceOf[Double].toLong))
-
     }
   }
 
   /**
     * Generates a new graph of type Graph[VertexState,Long] based on an
-    input graph of type.
+    * input graph of type.
     * Graph[VD,Long].  The resulting graph can be used for louvain computation.
     *
     */
   def createLouvainGraph[VD: ClassTag](graph: Graph[VD, Long]):
-      Graph[LouvainData, Long] = {
+  Graph[LouvainData, Long] = {
     val nodeWeights = graph.aggregateMessages(
-      (e:EdgeContext[VD,Long,Long]) => {
+      (e: EdgeContext[VD, Long, Long]) => {
         e.sendToSrc(e.attr)
         e.sendToDst(e.attr)
       },
@@ -62,9 +95,148 @@ class Louvain() extends Serializable{
     }).partitionBy(PartitionStrategy.EdgePartition2D).groupEdges(_ + _)
   }
 
+  def louvain(
+               sc: SparkContext,
+               graph: Graph[LouvainData, Long],
+               minProgress: Int = 1,
+               progressCounter: Int = 1): (Long, Graph[LouvainData, Long], Int) = {
+
+    var louvainGraph = graph.cache()
+
+    val graphWeight = louvainGraph.vertices.map(louvainVertex => {
+      val (vertexId, louvainData) = louvainVertex
+      louvainData.internalWeight + louvainData.nodeWeight
+    }).reduce(_ + _)
+
+    val totalGraphWeight = sc.broadcast(graphWeight)
+
+    println("totalEdgeWeight: " + totalGraphWeight.value)
+
+    // gather community information from each vertex's local neighborhood
+    var communityRDD =
+      louvainGraph.aggregateMessages(sendCommunityData, mergeCommunityMessages)
+
+    var activeMessages = communityRDD.count() //materializes the msgRDD
+    //and caches it in memory
+    var updated = 0L - minProgress
+    var even = false
+    var count = 0
+    val maxIter = 100000
+    var stop = 0
+    var updatedLastPhase = 0L
+    do {
+      count += 1
+      even = !even
+
+      // label each vertex with its best community based on neighboring
+      // community information
+      val labeledVertices = louvainVertJoin(louvainGraph, communityRDD,
+        totalGraphWeight, even).cache()
+
+      // calculate new sigma total value for each community (total weight
+      // of each community)
+      val communityUpdate = labeledVertices
+        .map({ case (vid, vdata) => (vdata.community, vdata.nodeWeight +
+          vdata.internalWeight)
+        })
+        .reduceByKey(_ + _).cache()
+
+      // map each vertex ID to its updated community information
+      val communityMapping = labeledVertices
+        .map({ case (vid, vdata) => (vdata.community, vid) })
+        .join(communityUpdate)
+        .map({ case (community, (vid, sigmaTot)) => (vid, (community, sigmaTot)) })
+        .cache()
+
+      // join the community labeled vertices with the updated community info
+      val updatedVertices = labeledVertices.join(communityMapping).map({
+        case (vertexId, (louvainData, communityTuple)) =>
+          val (community, communitySigmaTot) = communityTuple
+          louvainData.community = community
+          louvainData.communitySigmaTot = communitySigmaTot
+          (vertexId, louvainData)
+      }).cache()
+
+      updatedVertices.count()
+      labeledVertices.unpersist(blocking = false)
+      communityUpdate.unpersist(blocking = false)
+      communityMapping.unpersist(blocking = false)
+
+      val prevG = louvainGraph
+
+      louvainGraph = louvainGraph.outerJoinVertices(updatedVertices)((vid, old, newOpt) => newOpt.getOrElse(old))
+      louvainGraph.cache()
+
+      // gather community information from each vertex's local neighborhood
+      val oldMsgs = communityRDD
+      communityRDD = louvainGraph.aggregateMessages(sendCommunityData, mergeCommunityMessages).cache()
+      activeMessages = communityRDD.count() // materializes the graph
+      // by forcing computation
+
+      oldMsgs.unpersist(blocking = false)
+      updatedVertices.unpersist(blocking = false)
+      prevG.unpersistVertices(blocking = false)
+
+      // half of the communites can swtich on even cycles and the other half
+      // on odd cycles (to prevent deadlocks) so we only want to look for
+      // progess on odd cycles (after all vertcies have had a chance to
+      // move)
+      if (even) updated = 0
+      updated = updated + louvainGraph.vertices.filter(_._2.changed).count
+
+      if (!even) {
+        println("  # vertices moved: " + java.text.NumberFormat.getInstance().format(updated))
+
+        if (updated >= updatedLastPhase - minProgress) stop += 1
+
+        updatedLastPhase = updated
+      }
+
+    } while (stop <= progressCounter && (even || (updated > 0 && count < maxIter)))
+
+    println("\nCompleted in " + count + " cycles")
+
+    // Use each vertex's neighboring community data to calculate the
+    // global modularity of the graph
+    val newVertices =
+    louvainGraph.vertices.innerJoin(communityRDD)((vertexId, louvainData,
+                                                   communityMap) => {
+      // sum the nodes internal weight and all of its edges that are in
+      // its community
+      val community = louvainData.community
+      var accumulatedInternalWeight = louvainData.internalWeight
+      val sigmaTot = louvainData.communitySigmaTot.toLong
+
+      def accumulateTotalWeight(totalWeight: Long, item: ((Long, Long), Long)) = {
+        val ((communityId, sigmaTotal), communityEdgeWeight) = item
+        if (louvainData.community == communityId)
+          totalWeight + communityEdgeWeight
+        else
+          totalWeight
+      }
+
+      accumulatedInternalWeight = communityMap.foldLeft(accumulatedInternalWeight)(accumulateTotalWeight)
+      val M = totalGraphWeight.value
+      val k_i = louvainData.nodeWeight + louvainData.internalWeight
+      val q = (accumulatedInternalWeight / M) - ((sigmaTot * k_i) / math.pow(M, 2))
+      //println(s"vid: $vid community: $community $q = ($k_i_in / $M) - ( ($sigmaTot * $k_i) / math.pow($M, 2) )")
+      if (q < 0)
+        0
+      else
+        q
+    })
+
+    val actualQ = newVertices.values.reduce(_ + _)
+
+    // return the modularity value of the graph along with the
+    // graph. vertices are labeled with their community
+    (actualQ.toLong, louvainGraph, count / 2)
+
+  }
+
   /**
     * Creates the messages passed between each vertex to convey
-    neighborhood community data.
+    * neighborhood community data.
     */
   def sendCommunityData(e: EdgeContext[LouvainData, Long, Map[(Long, Long), Long]]) = {
     val m1 = (Map((e.srcAttr.community, e.srcAttr.communitySigmaTot) -> e.attr))
@@ -93,46 +265,16 @@ class Louvain() extends Serializable{
   }
 
   /**
-    * Returns the change in modularity that would result from a vertex
-    moving to a specified community.
-    */
-  def q(
-    currCommunityId: Long,
-    testCommunityId: Long,
-    testSigmaTot: Long,
-    edgeWeightInCommunity: Long,
-    nodeWeight: Long,
-    internalWeight: Long,
-    totalEdgeWeight: Long): BigDecimal = {
-
-    val isCurrentCommunity = currCommunityId.equals(testCommunityId)
-    val M = BigDecimal(totalEdgeWeight)
-    val k_i_in_L = if (isCurrentCommunity) edgeWeightInCommunity + internalWeight else edgeWeightInCommunity
-    val k_i_in = BigDecimal(k_i_in_L)
-    val k_i = BigDecimal(nodeWeight + internalWeight)
-    val sigma_tot = if (isCurrentCommunity) BigDecimal(testSigmaTot) - k_i else BigDecimal(testSigmaTot)
-
-    var deltaQ = BigDecimal(0.0)
-
-    if (!(isCurrentCommunity && sigma_tot.equals(BigDecimal.valueOf(0.0)))) {
-      deltaQ = k_i_in - (k_i * sigma_tot / M)
-      //println(s"      $deltaQ = $k_i_in - ( $k_i * $sigma_tot / $M")
-    }
-
-    deltaQ
-  }
-
-  /**
     * Join vertices with community data form their neighborhood and
-    select the best community for each vertex to maximize change in
-    modularity.
+    * select the best community for each vertex to maximize change in
+    * modularity.
     * Returns a new set of vertices with the updated vertex state.
     */
   def louvainVertJoin(
-    louvainGraph: Graph[LouvainData, Long],
-    msgRDD: VertexRDD[Map[(Long, Long), Long]],
-    totalEdgeWeight: Broadcast[Long],
-    even: Boolean) = {
+                       louvainGraph: Graph[LouvainData, Long],
+                       msgRDD: VertexRDD[Map[(Long, Long), Long]],
+                       totalEdgeWeight: Broadcast[Long],
+                       even: Boolean) = {
 
     // innerJoin[U, VD2](other: RDD[(VertexId, U)])(f: (VertexId, VD, U) => VD2): VertexRDD[VD2]
     louvainGraph.vertices.innerJoin(msgRDD)((vid, louvainData, communityMessages) => {
@@ -169,7 +311,7 @@ class Louvain() extends Serializable{
       // high to low on odd cycles
       if (louvainData.community != bestCommunity && ((even &&
         louvainData.community > bestCommunity) || (!even &&
-          louvainData.community < bestCommunity))) {
+        louvainData.community < bestCommunity))) {
         //println("  "+vid+" SWITCHED from "+vdata.community+" to "+bestCommunity)
         louvainData.community = bestCommunity
         louvainData.communitySigmaTot = bestSigmaTot
@@ -186,141 +328,34 @@ class Louvain() extends Serializable{
     })
   }
 
-  def louvain(
-    sc: SparkContext,
-    graph: Graph[LouvainData, Long],
-    minProgress: Int = 1,
-    progressCounter: Int = 1): (Long, Graph[LouvainData, Long], Int) = {
+  /**
+    * Returns the change in modularity that would result from a vertex
+    * moving to a specified community.
+    */
+  def q(
+         currCommunityId: Long,
+         testCommunityId: Long,
+         testSigmaTot: Long,
+         edgeWeightInCommunity: Long,
+         nodeWeight: Long,
+         internalWeight: Long,
+         totalEdgeWeight: Long): BigDecimal = {
 
-    var louvainGraph = graph.cache()
+    val isCurrentCommunity = currCommunityId.equals(testCommunityId)
+    val M = BigDecimal(totalEdgeWeight)
+    val k_i_in_L = if (isCurrentCommunity) edgeWeightInCommunity + internalWeight else edgeWeightInCommunity
+    val k_i_in = BigDecimal(k_i_in_L)
+    val k_i = BigDecimal(nodeWeight + internalWeight)
+    val sigma_tot = if (isCurrentCommunity) BigDecimal(testSigmaTot) - k_i else BigDecimal(testSigmaTot)
 
-    val graphWeight = louvainGraph.vertices.map(louvainVertex => {
-      val (vertexId, louvainData) = louvainVertex
-      louvainData.internalWeight + louvainData.nodeWeight
-    }).reduce(_ + _)
+    var deltaQ = BigDecimal(0.0)
 
-    val totalGraphWeight = sc.broadcast(graphWeight)
+    if (!(isCurrentCommunity && sigma_tot.equals(BigDecimal.valueOf(0.0)))) {
+      deltaQ = k_i_in - (k_i * sigma_tot / M)
+      //println(s"      $deltaQ = $k_i_in - ( $k_i * $sigma_tot / $M")
+    }
 
-    println("totalEdgeWeight: " + totalGraphWeight.value)
-
-    // gather community information from each vertex's local neighborhood
-    var communityRDD =
-      louvainGraph.aggregateMessages(sendCommunityData, mergeCommunityMessages)
-
-    var activeMessages = communityRDD.count() //materializes the msgRDD
-                                              //and caches it in memory
-    var updated = 0L - minProgress
-    var even = false
-    var count = 0
-    val maxIter = 100000
-    var stop = 0
-    var updatedLastPhase = 0L
-    do {
-      count += 1
-      even = !even
-
-      // label each vertex with its best community based on neighboring
-      // community information
-      val labeledVertices = louvainVertJoin(louvainGraph, communityRDD,
-        totalGraphWeight, even).cache()
-
-      // calculate new sigma total value for each community (total weight
-      // of each community)
-      val communityUpdate = labeledVertices
-        .map({ case (vid, vdata) => (vdata.community, vdata.nodeWeight +
-          vdata.internalWeight)})
-        .reduceByKey(_ + _).cache()
-
-      // map each vertex ID to its updated community information
-      val communityMapping = labeledVertices
-        .map({ case (vid, vdata) => (vdata.community, vid)})
-        .join(communityUpdate)
-        .map({ case (community, (vid, sigmaTot)) => (vid, (community, sigmaTot))})
-        .cache()
-
-      // join the community labeled vertices with the updated community info
-      val updatedVertices = labeledVertices.join(communityMapping).map({
-        case (vertexId, (louvainData, communityTuple)) =>
-          val (community, communitySigmaTot) = communityTuple
-          louvainData.community = community
-          louvainData.communitySigmaTot = communitySigmaTot
-          (vertexId, louvainData)
-      }).cache()
-
-      updatedVertices.count()
-      labeledVertices.unpersist(blocking = false)
-      communityUpdate.unpersist(blocking = false)
-      communityMapping.unpersist(blocking = false)
-
-      val prevG = louvainGraph
-
-      louvainGraph = louvainGraph.outerJoinVertices(updatedVertices)((vid, old, newOpt) => newOpt.getOrElse(old))
-      louvainGraph.cache()
-
-      // gather community information from each vertex's local neighborhood
-      val oldMsgs = communityRDD
-      communityRDD = louvainGraph.aggregateMessages(sendCommunityData, mergeCommunityMessages).cache()
-      activeMessages = communityRDD.count() // materializes the graph
-                                            // by forcing computation
-
-      oldMsgs.unpersist(blocking = false)
-      updatedVertices.unpersist(blocking = false)
-      prevG.unpersistVertices(blocking = false)
-
-      // half of the communites can swtich on even cycles and the other half
-      // on odd cycles (to prevent deadlocks) so we only want to look for
-      // progess on odd cycles (after all vertcies have had a chance to
-      // move)
-      if (even) updated = 0
-      updated = updated + louvainGraph.vertices.filter(_._2.changed).count
-
-      if (!even) {
-        println("  # vertices moved: " + java.text.NumberFormat.getInstance().format(updated))
-
-        if (updated >= updatedLastPhase - minProgress) stop += 1
-
-        updatedLastPhase = updated
-      }
-
-    } while (stop <= progressCounter && (even || (updated > 0 && count < maxIter)))
-
-    println("\nCompleted in " + count + " cycles")
-
-    // Use each vertex's neighboring community data to calculate the
-    // global modularity of the graph
-    val newVertices =
-      louvainGraph.vertices.innerJoin(communityRDD)((vertexId, louvainData,
-        communityMap) => {
-        // sum the nodes internal weight and all of its edges that are in
-        // its community
-        val community = louvainData.community
-        var accumulatedInternalWeight = louvainData.internalWeight
-        val sigmaTot = louvainData.communitySigmaTot.toLong
-        def accumulateTotalWeight(totalWeight: Long, item: ((Long, Long), Long)) = {
-          val ((communityId, sigmaTotal), communityEdgeWeight) = item
-          if (louvainData.community == communityId)
-            totalWeight + communityEdgeWeight
-          else
-            totalWeight
-        }
-
-        accumulatedInternalWeight = communityMap.foldLeft(accumulatedInternalWeight)(accumulateTotalWeight)
-        val M = totalGraphWeight.value
-        val k_i = louvainData.nodeWeight + louvainData.internalWeight
-        val q = (accumulatedInternalWeight / M) - ((sigmaTot * k_i) / math.pow(M, 2))
-        //println(s"vid: $vid community: $community $q = ($k_i_in / $M) - ( ($sigmaTot * $k_i) / math.pow($M, 2) )")
-        if (q < 0)
-          0
-        else
-          q
-      })
-
-    val actualQ = newVertices.values.reduce(_ + _)
-
-    // return the modularity value of the graph along with the
-    // graph. vertices are labeled with their community
-    (actualQ.toLong, louvainGraph, count / 2)
-
+    deltaQ
   }
 
   def compressGraph(graph: Graph[LouvainData, Long], debug: Boolean = true): Graph[LouvainData, Long] = {
@@ -365,7 +400,7 @@ class Louvain() extends Serializable{
 
     // calculate the weighted degree of each node
     val nodeWeights = compressedGraph.aggregateMessages(
-      (e:EdgeContext[LouvainData,Long,Long]) => {
+      (e: EdgeContext[LouvainData, Long, Long]) => {
         e.sendToSrc(e.attr)
         e.sendToDst(e.attr)
       },
@@ -389,64 +424,21 @@ class Louvain() extends Serializable{
   }
 
   def saveLevel(
-    sc: SparkContext,
-    hc: HiveContext,
-    config: LouvainConfig,
-    level: Int,
-    qValues: Array[(Int, Long)],
-    graph: Graph[LouvainData, Long]) = {
+                 hc: HiveContext,
+                 config: LouvainConfig,
+                 dateInput: String,
+                 level: Int,
+                 qValues: Array[(Int, Long)],
+                 graph: Graph[LouvainData, Long]) = {
 
     val alphaThreshold = config.alphaThreshold.toFloat * 1000
     val vertexRDD = graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
-      (config.dateInput , vertexId, louvainData.community, level, alphaThreshold.toInt, config.edgeCostFactor.toInt)
+      (dateInput, vertexId, louvainData.community, level, alphaThreshold.toInt, config.edgeCostFactor.toInt)
     })
-  
-    val df = hc.createDataFrame(vertexRDD)//, fileSchema)
-    
-    df.write.format("orc").mode("append").insertInto(config.hiveSchema + "." + config.hiveOutputTable)    
-  }
 
-  //def run[VD: ClassTag](sc: SparkContext, config: LouvainConfig, graph: Graph[VD, Long]): Unit = {
-  def run[VD: ClassTag](sc: SparkContext, hc: HiveContext, config: LouvainConfig): Unit = {
-    val edgeRDD = getEdgeRDD(sc, hc, config)
-    val initialGraph = Graph.fromEdges(edgeRDD, None)
-    var louvainGraph = createLouvainGraph(initialGraph)
+    val df = hc.createDataFrame(vertexRDD) //, fileSchema)
 
-    var compressionLevel = -1 // number of times the graph has been compressed
-    var q_modularityValue = -1.0 // current modularity value
-    var halt = false
-
-    var qValues: Array[(Int, Long)] = Array()
-
-    do {
-      compressionLevel += 1
-      println(s"\nStarting Louvain level $compressionLevel")
-
-      // label each vertex with its best community choice at this level of compression
-      val (currentQModularityValue, currentGraph, numberOfPasses) =
-        louvain(sc, louvainGraph, config.minimumCompressionProgress, config.progressCounter)
-
-      louvainGraph.unpersistVertices(blocking = false)
-      louvainGraph = currentGraph
-
-      println(s"qValue: $currentQModularityValue")
-
-      qValues = qValues :+ ((compressionLevel, currentQModularityValue))
-
-      saveLevel(sc, hc, config, compressionLevel, qValues, louvainGraph)
-
-      // If modularity was increased by at least 0.001 compress the graph and repeat
-      // halt immediately if the community labeling took less than 3 passes
-      //println(s"if ($passes > 2 && $currentQ > $q + 0.001 )")
-      if (numberOfPasses > 2 && currentQModularityValue > q_modularityValue + 0.001) {
-        q_modularityValue = currentQModularityValue
-        louvainGraph = compressGraph(louvainGraph)
-      }
-      else {
-        halt = true
-      }
-
-    } while (!halt)
+    df.write.format("orc").mode("append").insertInto(config.hiveSchema + "." + config.hiveOutputTable)
   }
 }

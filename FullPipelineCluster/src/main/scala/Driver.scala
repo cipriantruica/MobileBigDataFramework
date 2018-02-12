@@ -1,39 +1,34 @@
-
 import java.util.Calendar
 
-import org.apache.spark.graphx.{Edge, Graph}
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.hive.HiveContext
-
+import org.apache.spark.{SparkConf, SparkContext}
 
 object Driver {
 
-  def main(args: Array[String]): Unit ={
-    // the file with the mearsuments
-    val printFile = "./results/runtime_Louvain_Modularity_Hive_test_" + args(4) + ".txt"
+  def main(args: Array[String]): Unit = {
     // the day for wich we compute louvain modularity
-    var date = args(0)
+    var dateInput = args(0)
     // the alpha threshold filter value
     var alphaThreshold = args(1)
     // a constant for changing the edge cost factor
     var edgeCostFactor = args(2)
-    var noTables = args(3).toInt // use EdgesAlpha table or Edges + LinkFiltering tables
+    var noTables = args(3).toInt // use 1 for  EdgesAlpha table or 2 for Edges + LinkFiltering tables
+    val noTest = args(4) // the test number, just for testing
     val config = LouvainConfig(
       "mi2mi",
       "edges",
-      "LinkFiltering",
-      "EdgesAlpha",
-      "LouvainCommunity", 
+      "linkfiltering",
+      "edgesalpha",
+      "louvaincommunity",
       noTables,
-      date,
       alphaThreshold,
       edgeCostFactor,
       2000,
       1)
-
+    // the file with the mearsuments
+    val printFile = "./results/runtime_LMH_" + dateInput + "_noTbls_" + noTables + "_test_" + noTest + "_alphaThreshold_" + config.alphaThreshold + "_edgeCostFactor_" + config.edgeCostFactor + ".txt"
     // Create spark configuration
-    val sparkConf = new SparkConf().setAppName("Louvain with Hive Test no. " + args(0) + " for date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    val sparkConf = new SparkConf().setAppName("Louvain with Hive Test no. " + noTest + " for " + noTables + " tables with date: " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)
@@ -41,13 +36,14 @@ object Driver {
     val hc = new HiveContext(sc)
 
     // create the table if it doesn't exists
+    hc.sql("DROP TABLE IF EXISTS " + config.hiveSchema + "." + config.hiveOutputTable)
     hc.sql("CREATE TABLE IF NOT EXISTS " + config.hiveSchema + "." + config.hiveOutputTable + "(MilanoDate date, SID1 int, community int, level int, alphaThreshold int, edgeCostFactor int)")
 
     // PrintWriter
     import java.io._
     val pw = new PrintWriter(new File(printFile))
 
-    pw.println("Create Louvain Modularity Hive")
+    pw.println("Louvain with Hive Test no. " + noTest + " for " + noTables + " tables with date: " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
     pw.println("Start time: " + Calendar.getInstance().getTime())
 
     val t0 = System.nanoTime()
@@ -56,24 +52,30 @@ object Driver {
     val louvainTbl = hc.table(config.hiveSchema + "." + config.hiveOutputTable)
     // register the table so it can be used in SQL
     louvainTbl.createOrReplaceTempView(config.hiveOutputTable)
-    val exists = hc.sql("select count(MilanoDate) from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and edgeCostFactor = " + config.edgeCostFactor + " and alphaThreshold = " + config.alphaThreshold + " * 1000" )
-    // val exists = hc.sql("select count(MilanoDate), alphaThreshold from " + config.hiveOutputTable + " where MilanoDate = '" + config.dateInput + "' and edgeCostFactor = " + config.edgeCostFactor + " group by alphaThreshold")
+    val exists = hc.sql("select count(MilanoDate) from " + config.hiveOutputTable + " where MilanoDate = '" + dateInput + "' and edgeCostFactor = " + config.edgeCostFactor + " and alphaThreshold = " + config.alphaThreshold + " * 1000")
 
-    println("exists: " + exists.first().getLong(0))
-    if(exists.first().getLong(0) == 0){
+    if (exists.first().getLong(0) == 0) {
+
       val louvain = new Louvain()
-      louvain.run(sc, hc, config)  
+      louvain.run(sc, hc, config, dateInput)
+      // TO DO - make louvain for all the dates using map
+      // See how to modify the conde so that we don't send SparkContext and HiveContext to each worker!!!
+      // be carefull which table you use
+      // val edgesTbl = hc.table(config.hiveSchema + "." + config.hiveInputTable)
+      // edgesTbl.createOrReplaceTempView(config.hiveInputTable)
+      // hc.sql("select distinct MilanoDate from " + config.hiveInputTable).rdd.map(row => louvain.run(sc, hc, config, row(0).toString))
+
     }
-    else{
-      println("already computer for MilanoDate = " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
-      pw.println("already computer for MilanoDate = " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    else {
+      println("already computer for MilanoDate = " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+      pw.println("already computer for MilanoDate = " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
     }
 
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
-    pw.println("Elapsed time (ms): " + ((t1 - t0)/1e6))
-    println("Louvain with Hive Test no. " + args(0) + " for date: " + config.dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
-    println("Elapsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
+    println("Louvain with Hive Test no. " + noTest + " for " + noTables + " tables with date: " + dateInput + " and alphaThreshold = " + config.alphaThreshold + " and edgeCostFactor =" + config.edgeCostFactor)
+    println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 
     pw.close()

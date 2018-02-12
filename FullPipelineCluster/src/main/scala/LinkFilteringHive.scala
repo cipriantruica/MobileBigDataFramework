@@ -1,10 +1,6 @@
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types._
-import org.apache.spark.sql.hive.HiveContext
 
+import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 
 /*
@@ -16,11 +12,12 @@ import org.apache.spark.{SparkConf, SparkContext}
 object LinkFilteringHive {
   def main(args: Array[String]): Unit = {
     // the file with the mearsuments
-    val printFile = "./results/runtime_Link_Filtering_Hive_test_" + args(0) + ".txt"
+    val noTest = args(0)
+    val printFile = "./results/runtime_Link_Filtering_Hive_test_" + noTest + ".txt"
 
     // Spark session
     // Create spark configuration
-    val sparkConf = new SparkConf().setAppName("Link Filtering Hive Test no. " + args(0))
+    val sparkConf = new SparkConf().setAppName("Link Filtering Hive Test no. " + noTest)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)
@@ -60,9 +57,9 @@ object LinkFilteringHive {
     val t1 = System.nanoTime()
 
     pw.println("End time: " + Calendar.getInstance().getTime())
-    pw.println("Elapsed time (ms): " + ((t1 - t0)/1e6))
-	  println("Link Filtering Hive Test no. " + args(0))
-	  println("Elapsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
+    println("Link Filtering Hive Test no. " + noTest)
+    println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 
     pw.close()

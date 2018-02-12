@@ -1,7 +1,9 @@
+import java.util.Calendar
+
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types._
 import org.apache.spark.{SparkConf, SparkContext}
-import java.util.Calendar
+
 /*
     It reads all the data from the tcv and computes the edges.
     It uses a Dataframe with a single select.
@@ -14,7 +16,7 @@ object CreateEdgesHive {
     // val inputDirectory = "hdfs://localhost:9000/user/sheepman/input/MI2MI/MItoMI-2013-11*"
     val inputDirectory = "file:///home/sheepman/DATA_SETS/MItoMI-2013-11*"
     // the file with the mearsuments
-    val printFile = "./results/runtime_Create_Edges_Hive.txt"
+    val printFile = "./results/runtime_Create_Edges_Hive_" + args(0) + ".txt"
     // the tsv schema
     val fileSchema = StructType(Array(
       StructField("Timestamp", LongType, true),
@@ -59,7 +61,9 @@ object CreateEdgesHive {
 
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
-    pw.println("Elapsed time (ms): " + ((t1 - t0)/1e6))
+    pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
+    println("Create Edges Hive Test no. " + args(0))
+    println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 
     pw.close()
