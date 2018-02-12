@@ -13,7 +13,7 @@ object LinkFilteringHive {
   def main(args: Array[String]): Unit = {
     // the file with the mearsuments
     val noTest = args(0)
-    val printFile = "./results/runtime_Link_Filtering_Hive_test_" +  + ".txt"
+    val printFile = "./results/runtime_Link_Filtering_Hive_test_" + noTest + ".txt"
 
     // Spark session
     // Create spark configuration
