@@ -13,6 +13,7 @@ object JaccardCoefficient {
   def computeJC(
                  hc: HiveContext,
                  dateInput: String) = {
+    println("I am here " + dateInput)
     val query_union = "select MilanoDate, SID1, SID2 common_node, EdgeCost from edges where MilanoDate = '" + dateInput + "' union all select MilanoDate, SID2, SID1, EdgeCost from edges where MilanoDate = '" + dateInput + "'"
     hc.sql(query_union).createOrReplaceTempView("edgesUnion")
 
@@ -71,7 +72,7 @@ object JaccardCoefficient {
     // hc.sql(query_jc3).write.format("orc").saveAsTable("mi2mi.jaccardcoefficient")
 
     val query_date = "select distinct MilanoDate from edges order by MilanoDate"
-    hc.sql(query_date).rdd.map(row => computeJC(hc, row(0).toString))
+    hc.sql(query_date).rdd.map(row => computeJC(hc, row(0).toString)).collect()
 
     val t1 = System.nanoTime()
 
