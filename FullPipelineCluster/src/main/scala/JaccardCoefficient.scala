@@ -15,14 +15,14 @@ object JaccardCoefficient {
                  hc: HiveContext,
                  dateInput: String): Boolean = {
     println("I am here " + dateInput)
-    val query_union = "select MilanoDate, SID1, SID2 common_node, EdgeCost from edges where MilanoDate = '" + dateInput + "' union all select MilanoDate, SID2, SID1, EdgeCost from edges where MilanoDate = '" + dateInput + "'"
-    hc.sql(query_union).createOrReplaceTempView("edgesUnion")
-
-    val query_min = "select c.MilanoDate, c.SID1, c.SID2, sum(c.mins) sum_mins from (select b.MilanoDate, b.SID1, b.SID2, b.common_node, min(b.EdgeCost) mins from (select g1.MilanoDate, g1.SID1, g1.SID2, a1.common_node, a1.EdgeCost from edges g1 inner join edgesUnion a1 on  a1.SID1 in (g1.SID1, g1.SID2) and a1.MilanoDate = g1.MilanoDate inner join edgesUnion a2 on a2.SID1 = g1.SID1 and a2.MilanoDate = g1.MilanoDate inner join edgesUnion a3 on a3.SID1 = g1.SID2 and a3.MilanoDate = g1.MilanoDate where a3.common_node = a1.common_node and a2.common_node = a1.common_node and g1.MilanoDate = '" + dateInput + "') b  group by b.MilanoDate, b.SID1, b.SID2, b.common_node ) c  group by c.MilanoDate, c.SID1, c.SID2"
-    val query_max = "select c.MilanoDate, c.SID1, c.SID2, sum(c.maxs) sum_maxs from (select b.MilanoDate, b.SID1, b.SID2, b.common_node, max(b.EdgeCost) maxs from (select g1.MilanoDate, g1.SID1, g1.SID2, a1.common_node, a1.EdgeCost from edges g1 inner join edgesUnion a1 on  a1.SID1 in (g1.SID1, g1.SID2) and a1.MilanoDate = g1.MilanoDate inner join edgesUnion a2 on a2.SID1 = g1.SID1 and a2.MilanoDate = g1.MilanoDate inner join edgesUnion a3 on a3.SID1 = g1.SID2 and a3.MilanoDate = g1.MilanoDate where a1.common_node in (a2.common_node, a3.common_node)  and g1.MilanoDate = '" + dateInput + "') b group by b.MilanoDate, b.SID1, b.SID2, b.common_node ) c  group by c.MilanoDate, c.SID1, c.SID2"
-    val query_jc = "select d1.MilanoDate, d1.SID1, d2.SID2, d1.sum_mins/d2.sum_maxs jaccard_coefficient from (" + query_min + ") d1 inner join (" + query_max + ") d2 on d1.SID1 = d2.SID1 and d1.SID2 = d2.SID2 and d1.MilanoDate = d2.MilanoDate and d1.MilanoDate = '" + dateInput + "'"
-
-    hc.sql(query_jc).write.format("orc").mode("append").insertInto("mi2mi.jaccardcoefficient")
+//    val query_union = "select MilanoDate, SID1, SID2 common_node, EdgeCost from edges where MilanoDate = '" + dateInput + "' union all select MilanoDate, SID2, SID1, EdgeCost from edges where MilanoDate = '" + dateInput + "'"
+//    hc.sql(query_union).createOrReplaceTempView("edgesUnion")
+//
+//    val query_min = "select c.MilanoDate, c.SID1, c.SID2, sum(c.mins) sum_mins from (select b.MilanoDate, b.SID1, b.SID2, b.common_node, min(b.EdgeCost) mins from (select g1.MilanoDate, g1.SID1, g1.SID2, a1.common_node, a1.EdgeCost from edges g1 inner join edgesUnion a1 on  a1.SID1 in (g1.SID1, g1.SID2) and a1.MilanoDate = g1.MilanoDate inner join edgesUnion a2 on a2.SID1 = g1.SID1 and a2.MilanoDate = g1.MilanoDate inner join edgesUnion a3 on a3.SID1 = g1.SID2 and a3.MilanoDate = g1.MilanoDate where a3.common_node = a1.common_node and a2.common_node = a1.common_node and g1.MilanoDate = '" + dateInput + "') b  group by b.MilanoDate, b.SID1, b.SID2, b.common_node ) c  group by c.MilanoDate, c.SID1, c.SID2"
+//    val query_max = "select c.MilanoDate, c.SID1, c.SID2, sum(c.maxs) sum_maxs from (select b.MilanoDate, b.SID1, b.SID2, b.common_node, max(b.EdgeCost) maxs from (select g1.MilanoDate, g1.SID1, g1.SID2, a1.common_node, a1.EdgeCost from edges g1 inner join edgesUnion a1 on  a1.SID1 in (g1.SID1, g1.SID2) and a1.MilanoDate = g1.MilanoDate inner join edgesUnion a2 on a2.SID1 = g1.SID1 and a2.MilanoDate = g1.MilanoDate inner join edgesUnion a3 on a3.SID1 = g1.SID2 and a3.MilanoDate = g1.MilanoDate where a1.common_node in (a2.common_node, a3.common_node)  and g1.MilanoDate = '" + dateInput + "') b group by b.MilanoDate, b.SID1, b.SID2, b.common_node ) c  group by c.MilanoDate, c.SID1, c.SID2"
+//    val query_jc = "select d1.MilanoDate, d1.SID1, d2.SID2, d1.sum_mins/d2.sum_maxs jaccard_coefficient from (" + query_min + ") d1 inner join (" + query_max + ") d2 on d1.SID1 = d2.SID1 and d1.SID2 = d2.SID2 and d1.MilanoDate = d2.MilanoDate and d1.MilanoDate = '" + dateInput + "'"
+//
+//    hc.sql(query_jc).write.format("orc").mode("append").insertInto("mi2mi.jaccardcoefficient")
     return true
   }
 
