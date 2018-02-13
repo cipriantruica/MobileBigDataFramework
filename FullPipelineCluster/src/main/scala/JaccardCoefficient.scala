@@ -1,3 +1,5 @@
+import java.util.Calendar
+
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -8,9 +10,11 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object JaccardCoefficient {
   def main(args: Array[String]): Unit = {
+    val noTest = args(0)
+    val printFile = "./results/runtime_Jaccard_Coefficient_Hive_test_" + noTest + ".txt"
 
     // Create spark configuration
-    val sparkConf = new SparkConf().setAppName("Jaccard Coefficient")
+    val sparkConf = new SparkConf().setAppName("Jaccard Coefficient Hive Test" + noTest)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)
@@ -18,6 +22,14 @@ object JaccardCoefficient {
     val hc = new HiveContext(sc)
     // drop table if it exists
     hc.sql("drop table if exists jaccardcoefficient")
+
+    import java.io._
+    val pw = new PrintWriter(new File(printFile))
+
+    pw.println("Jaccard Coefficient  Hive")
+    pw.println("Start time: " + Calendar.getInstance().getTime())
+
+    val t0 = System.nanoTime()
 
     val edgesTbl = hc.table("mi2mi.edges")
     edgesTbl.createOrReplaceTempView("edges")
@@ -34,6 +46,16 @@ object JaccardCoefficient {
     // compute jaccard coefficient for (node1, node2)
 
     hc.sql(query_jc).write.format("orc").saveAsTable("mi2mi.jaccardcoefficient")
+
+    val t1 = System.nanoTime()
+
+    pw.println("End time: " + Calendar.getInstance().getTime())
+    pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
+    println("Link Filtering Hive Test no. " + noTest)
+    println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
+    pw.println("*************************************************")
+
+    pw.close()
   }
 }
 
