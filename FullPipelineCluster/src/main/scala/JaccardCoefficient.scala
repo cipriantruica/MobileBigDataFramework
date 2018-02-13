@@ -21,7 +21,7 @@ object JaccardCoefficient {
     // Create Hive context
     val hc = new HiveContext(sc)
     // drop table if it exists
-    hc.sql("drop table if exists jaccardcoefficient")
+    hc.sql("drop table if exists mi2mi.jaccardcoefficient")
 
     import java.io._
     val pw = new PrintWriter(new File(printFile))
