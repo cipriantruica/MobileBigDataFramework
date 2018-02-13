@@ -46,8 +46,8 @@ object JaccardCoefficient {
 
     val t0 = System.nanoTime()
 
-    // val edgesTbl = hc.table("mi2mi.edges")
-    // edgesTbl.createOrReplaceTempView("edges")
+    val edgesTbl = hc.table("mi2mi.edges")
+    edgesTbl.createOrReplaceTempView("edges")
 
     // val query_union = "select MilanoDate, SID1, SID2 common_node, EdgeCost from edges union all select MilanoDate, SID2, SID1, EdgeCost from edges"
     // hc.sql(query_union).createOrReplaceTempView("edgesUnion")
