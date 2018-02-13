@@ -1,5 +1,6 @@
 import java.util.Calendar
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -12,7 +13,7 @@ object JaccardCoefficient {
 
   def computeJC(
                  hc: HiveContext,
-                 dateInput: String) = {
+                 dateInput: String): Boolean = {
     println("I am here " + dateInput)
     val query_union = "select MilanoDate, SID1, SID2 common_node, EdgeCost from edges where MilanoDate = '" + dateInput + "' union all select MilanoDate, SID2, SID1, EdgeCost from edges where MilanoDate = '" + dateInput + "'"
     hc.sql(query_union).createOrReplaceTempView("edgesUnion")
@@ -22,7 +23,7 @@ object JaccardCoefficient {
     val query_jc = "select d1.MilanoDate, d1.SID1, d2.SID2, d1.sum_mins/d2.sum_maxs jaccard_coefficient from (" + query_min + ") d1 inner join (" + query_max + ") d2 on d1.SID1 = d2.SID1 and d1.SID2 = d2.SID2 and d1.MilanoDate = d2.MilanoDate and d1.MilanoDate = '" + dateInput + "'"
 
     hc.sql(query_jc).write.format("orc").mode("append").insertInto("mi2mi.jaccardcoefficient")
-
+    return true
   }
 
   def main(args: Array[String]): Unit = {
