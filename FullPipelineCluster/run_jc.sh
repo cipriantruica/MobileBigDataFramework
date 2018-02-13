@@ -5,12 +5,12 @@
 MODE=client
 MASTER=yarn
 NUM_EXECS=5
-NUM_CORES=4
-MEM_EXECS=4G
+NUM_CORES=6
+MEM_EXECS=8G
 NUM_TESTS=1
 JAR_FILE=target/scala-2.11/fullpipelinecluster_2.11-0.1.jar
 DRIVER_MEM=4G
-DRIVER_CORES=4
+DRIVER_CORES=6
 
 
 for i in `seq 1 $NUM_TESTS`
