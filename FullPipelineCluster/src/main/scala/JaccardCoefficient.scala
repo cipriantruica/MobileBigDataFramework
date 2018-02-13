@@ -51,7 +51,7 @@ object JaccardCoefficient {
 
     pw.println("End time: " + Calendar.getInstance().getTime())
     pw.println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
-    println("Link Filtering Hive Test no. " + noTest)
+    println("Jaccard Coefficient Hive Test no. " + noTest)
     println("Elapsed time (ms): " + ((t1 - t0) / 1e6))
     pw.println("*************************************************")
 
