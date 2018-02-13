@@ -53,7 +53,7 @@ class Louvain() extends Serializable {
   def getEdgeRDD(hc: HiveContext, config: LouvainConfig, dateInput: String, typeConversionMethod: String => Long = _.toLong): RDD[Edge[Long]] = {
     if (config.noTables == 2) {
       // read the data from the Hive (mi2mi - is the database name, edges is the table name)
-      val edgesTbl = hc.table(config.hiveSchema + "." + config.hiveInputTable)
+      val edgesTbl = hc.table(config.hiveInputTable)
       // register the table so it can be used in SQL
       edgesTbl.createOrReplaceTempView(config.hiveInputTable)
       val alphaTbl = hc.table(config.hiveInputTableAlpha)
