@@ -1,0 +1,200 @@
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,066
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 1 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 379445.744659
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,066
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 2 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 367199.312244
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,053
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 3 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 392239.936643
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,066
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 4 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 376970.781038
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,065
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 5 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 838506.879886
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,066
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 6 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 841529.474266
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,066
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 7 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 368579.013364
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,066
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 8 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 375423.444423
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,066
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 9 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 382371.616157
+
+Starting Louvain level 0
+totalEdgeWeight: 642277673036
+  # vertices moved: 9,054
+  # vertices moved: 4,286
+  # vertices moved: 1,467
+  # vertices moved: 816
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 642277673036
+  # vertices moved: 132
+  # vertices moved: 37
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 10 for 2 tables with date: 2013-11-05 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Elapsed time (ms): 847177.682501
