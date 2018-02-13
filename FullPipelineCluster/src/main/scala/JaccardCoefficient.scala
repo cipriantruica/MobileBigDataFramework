@@ -71,7 +71,8 @@ object JaccardCoefficient {
     // hc.sql(query_jc3).write.format("orc").saveAsTable("mi2mi.jaccardcoefficient")
 
     val query_date = "select distinct MilanoDate from edges"
-    hc.sql(query_date).rdd.map(row => computeJC(hc, row(0).toString))
+    hc.sql(query_date).show()
+    //.rdd.map(row => computeJC(hc, row(0).toString))
 
     val t1 = System.nanoTime()
 
