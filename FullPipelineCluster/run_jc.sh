@@ -14,6 +14,6 @@ INPUT_DATA=hdfs://hadoop-master:8020/user/ciprian/input/MI2MI/MItoMI-2013-11*
 for i in `seq 1 $NUM_TESTS`
 do
     # build Jaccard Coefficient table in Hive
-	spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class JaccardCoefficient $JAR_FILE $i >> "results/output_CreateEdgesHive"
+	spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class JaccardCoefficient $JAR_FILE $i >> "results/output_JaccardCoefficientHive"
 	sleep 10
 done;
