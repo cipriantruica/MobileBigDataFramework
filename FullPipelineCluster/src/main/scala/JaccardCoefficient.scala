@@ -70,7 +70,7 @@ object JaccardCoefficient {
     // compute jaccard coefficient for (node1, node2)
     // hc.sql(query_jc3).write.format("orc").saveAsTable("mi2mi.jaccardcoefficient")
 
-    val query_date = "select distinct MilanoDate from edges"
+    val query_date = "select distinct MilanoDate from edges order by MilanoDate"
     hc.sql(query_date).show()
     //.rdd.map(row => computeJC(hc, row(0).toString))
 
