@@ -152,7 +152,7 @@ inner join
 		select c.MilanoDate, c.SID1, c.SID2, sum(c.maxs) sum_maxs
 		from 
 			(
-				select b.MilanoDate, b.SID1, b.SID2, b.common_node, max(b.EdgeCost) max
+				select b.MilanoDate, b.SID1, b.SID2, b.common_node, max(b.EdgeCost) maxs
 				from 
 				(
 					select g1.MilanoDate, g1.SID1, g1.SID2, a.common_node, a.EdgeCost from edges g1

@@ -39,7 +39,6 @@ object JaccardCoefficient {
     val hc = new HiveContext(sc)
     // drop table if it exists
     hc.sql("drop table if exists mi2mi.jaccardcoefficient")
-    hc.sql("CREATE TABLE IF NOT EXISTS mi2mi.jaccardcoefficient(MilanoDate date, SID1 int, SID2 int, jaccardcoefficient double)")
     import java.io._
     val pw = new PrintWriter(new File(printFile))
 
@@ -65,7 +64,7 @@ object JaccardCoefficient {
     hc.sql(query_jc1).write.format("orc").saveAsTable("mi2mi.jaccardcoefficient")
     */
 
-    /*
+
     // Version v2 - optimized SQL query
 
     val query_min2 = "select c.MilanoDate, c.SID1, c.SID2, sum(c.mins) sum_mins from (select b.MilanoDate, b.SID1, b.SID2, b.common_node, min(b.EdgeCost) mins from (select g1.MilanoDate, g1.SID1, g1.SID2, a1.common_node, a1.EdgeCost from edges g1 inner join (select MilanoDate, SID1, SID2 common_node, EdgeCost from edges union all select MilanoDate, SID2, SID1, EdgeCost from edges) a1 on  a1.SID1 in (g1.SID1, g1.SID2) and a1.MilanoDate = g1.MilanoDate inner join (select MilanoDate, SID1, SID2 common_node from edges union all select MilanoDate, SID2, SID1 from edges) a2 on a2.SID1 = g1.SID1 and a2.MilanoDate = g1.MilanoDate inner join (select MilanoDate, SID1, SID2 common_node from edges union all select MilanoDate, SID2, SID1 from edges) a3 on a3.SID1 = g1.SID2 and a3.MilanoDate = g1.MilanoDate where a3.common_node = a1.common_node and a2.common_node = a1.common_node ) b  group by b.MilanoDate, b.SID1, b.SID2, b.common_node ) c  group by c.MilanoDate, c.SID1, c.SID2"
@@ -77,7 +76,7 @@ object JaccardCoefficient {
     hc.sql(query_max2).show()
     // compute jaccard coefficient for (node1, node2)
     hc.sql(query_jc2).write.format("orc").saveAsTable("mi2mi.jaccardcoefficient")
-    */
+
 
     /*
     // Version v3 - the same as version 2 but with an additional query for Union
@@ -98,6 +97,8 @@ object JaccardCoefficient {
     // val x = hc.sql(query_date).rdd.map(row => computeJC(hc, row(0).toString)).count()
     // println(x)
 
+    /*
+    hc.sql("CREATE TABLE IF NOT EXISTS mi2mi.jaccardcoefficient(MilanoDate date, SID1 int, SID2 int, jaccardcoefficient double)")
     val dateInput = "2013-11-01"
     val query_union = "select MilanoDate, SID1, SID2 common_node, EdgeCost from edges where MilanoDate = '" + dateInput + "' union all select MilanoDate, SID2, SID1, EdgeCost from edges where MilanoDate = '" + dateInput + "'"
     hc.sql(query_union).createOrReplaceTempView("edgesUnion")
@@ -107,7 +108,7 @@ object JaccardCoefficient {
     val query_jc = "select d1.MilanoDate, d1.SID1, d2.SID2, d1.sum_mins/d2.sum_maxs jaccard_coefficient from (" + query_min + ") d1 inner join (" + query_max + ") d2 on d1.SID1 = d2.SID1 and d1.SID2 = d2.SID2 and d1.MilanoDate = d2.MilanoDate and d1.MilanoDate = '" + dateInput + "'"
 
     hc.sql(query_jc).write.format("orc").mode("append").insertInto("mi2mi.jaccardcoefficient")
-
+    */
     val t1 = System.nanoTime()
 
     pw.println("End time: " + Calendar.getInstance().getTime())
