@@ -4,9 +4,9 @@
 
 MODE=client
 MASTER=yarn
-NUM_EXECS=16
-NUM_CORES=1
-MEM_EXECS=3G
+NUM_EXECS=5
+NUM_CORES=6
+MEM_EXECS=7G
 NUM_TESTS=1
 JAR_FILE=target/scala-2.11/fullpipelinecluster_2.11-0.1.jar
 DRIVER_MEM=8G
