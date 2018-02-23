@@ -1,0 +1,122 @@
+Statistics for Louvain runtime 10 test
+
+date: 2013-11-01
+The mean is, 677077.0655751999
+The standard deviation is, 13720.057724791493
+
+date: 2013-11-02
+The mean is, 718368.9018015
+The standard deviation is, 32753.80555904805
+
+date: 2013-11-03
+The mean is, 704136.5195875
+The standard deviation is, 61330.912776216275
+
+date: 2013-11-04
+The mean is, 812108.6293563
+The standard deviation is, 123033.46465476773
+
+date: 2013-11-05
+The mean is, 823638.0473229
+The standard deviation is, 91723.83881276727
+
+date: 2013-11-06
+The mean is, 811215.0758749
+The standard deviation is, 121794.00664390934
+
+date: 2013-11-07
+The mean is, 853163.9977258999
+The standard deviation is, 11474.554289410842
+
+date: 2013-11-08
+The mean is, 859722.0057582001
+The standard deviation is, 18440.697185291567
+
+date: 2013-11-09
+The mean is, 702022.6019427001
+The standard deviation is, 90223.80997185301
+
+date: 2013-11-10
+The mean is, 709713.4328764
+The standard deviation is, 62375.07111706663
+
+date: 2013-11-11
+The mean is, 881634.3153873999
+The standard deviation is, 25084.87792483076
+
+date: 2013-11-12
+The mean is, 890240.9858361001
+The standard deviation is, 67079.8265186762
+
+date: 2013-11-13
+The mean is, 869525.0925125001
+The standard deviation is, 19507.324622467288
+
+date: 2013-11-14
+The mean is, 873410.8958988001
+The standard deviation is, 20936.6984397801
+
+date: 2013-11-15
+The mean is, 808985.2109825
+The standard deviation is, 113481.01547396988
+
+date: 2013-11-16
+The mean is, 749303.1215091
+The standard deviation is, 18861.760480342986
+
+date: 2013-11-17
+The mean is, 715663.8008731
+The standard deviation is, 13301.398766230292
+
+date: 2013-11-18
+The mean is, 834749.8211692
+The standard deviation is, 65145.397305421866
+
+date: 2013-11-19
+The mean is, 855056.2157464
+The standard deviation is, 19926.501547443902
+
+date: 2013-11-20
+The mean is, 873284.9512363002
+The standard deviation is, 18214.68417934261
+
+date: 2013-11-21
+The mean is, 849571.7078603
+The standard deviation is, 13689.160849475382
+
+date: 2013-11-22
+The mean is, 851217.1602243001
+The standard deviation is, 20109.333255920774
+
+date: 2013-11-23
+The mean is, 685977.591868
+The standard deviation is, 19462.24831026152
+
+date: 2013-11-24
+The mean is, 701631.7497101
+The standard deviation is, 14384.421853967797
+
+date: 2013-11-25
+The mean is, 821764.2863404
+The standard deviation is, 88581.91505209384
+
+date: 2013-11-26
+The mean is, 850076.1574501998
+The standard deviation is, 27163.523289884462
+
+date: 2013-11-27
+The mean is, 843988.5014831999
+The standard deviation is, 22199.494966769515
+
+date: 2013-11-28
+The mean is, 791480.6024093
+The standard deviation is, 104928.88262945133
+
+date: 2013-11-29
+The mean is, 820411.424309
+The standard deviation is, 80692.2327647122
+
+date: 2013-11-30
+The mean is, 744329.4107764
+The standard deviation is, 17129.913281043253
+

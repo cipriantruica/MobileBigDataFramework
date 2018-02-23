@@ -1,0 +1,3 @@
+Statistics for LinkFiltering using Hive
+The mean is, 1001826.0350049001
+The standard deviation is, 401075.6376018528
