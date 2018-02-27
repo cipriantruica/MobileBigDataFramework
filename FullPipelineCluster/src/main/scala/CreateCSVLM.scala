@@ -58,10 +58,6 @@ object CreateCSVLM {
     val edgesTbl = hc.table("mi2mi.louvaincommunity")
     edgesTbl.createOrReplaceTempView("louvaincommunity")
 
-    // PrintWriter
-    import java.io._
-    val pw = new PrintWriter(new File(printFile))
-
     pw.println("Create Edges Hive")
     pw.println("Start time: " + Calendar.getInstance().getTime())
 
