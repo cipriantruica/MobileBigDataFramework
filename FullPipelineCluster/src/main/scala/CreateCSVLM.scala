@@ -38,7 +38,7 @@ object CreateCSVLM {
     val csvPath = "./results_lhm_csv/runtime_LMH_" + dateInput + "_alphaThreshold_" + alphaThreshold + "_edgeCostFactor_" + edgeCostFactor + ".csv"
 
     // Create spark configuration
-    val sparkConf = new SparkConf().setAppName("Louvain with Hive Test no. " + noTest + " for date: " + dateInput + " and alphaThreshold = " + alphaThreshold + " and edgeCostFactor =" + edgeCostFactor)
+    val sparkConf = new SparkConf().setAppName("Create CSV Louvain Test no. " + noTest + " for date: " + dateInput + " and alphaThreshold = " + alphaThreshold + " and edgeCostFactor =" + edgeCostFactor)
 
     // Create spark context
     val sc = new SparkContext(sparkConf)
