@@ -35,7 +35,7 @@ object CreateCSVLM {
     val edgeCostFactor = args(2)
     val noTest = args(3) // the test number, just for testing
     val printFile = "./results_lhm_csv/runtime_LMH_" + dateInput + "_test_" + noTest + "_alphaThreshold_" + alphaThreshold + "_edgeCostFactor_" + edgeCostFactor + ".txt"
-    val csvPath = "./results_lhm_csv/runtime_LMH_" + dateInput + "_alphaThreshold_" + alphaThreshold + "_edgeCostFactor_" + edgeCostFactor + ".csv"
+    val csvPath = "./results_lhm_csv/LMH_" + dateInput + "_alphaThreshold_" + alphaThreshold + "_edgeCostFactor_" + edgeCostFactor
 
     // Create spark configuration
     val sparkConf = new SparkConf().setAppName("Create CSV Louvain Test no. " + noTest + " for date: " + dateInput + " and alphaThreshold = " + alphaThreshold + " and edgeCostFactor =" + edgeCostFactor)
@@ -60,7 +60,7 @@ object CreateCSVLM {
     val query = "select l.sid1, community from louvaincommunity l where milanodate='" + dateInput + "' and alphathreshold= " + alphaThreshold + "*1000 and edgecostfactor=" + edgeCostFactor + " and l.level = " + condition
     val csvOutput = hc.sql(query)
     csvOutput.show()
-    csvOutput.write.csv(csvPath)
+//    csvOutput.write.csv(csvPath)
 
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
