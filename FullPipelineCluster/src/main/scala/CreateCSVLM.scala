@@ -57,7 +57,7 @@ object CreateCSVLM {
     lc.createOrReplaceTempView("louvaincommunity")
 
     val condition = "(select max(level) - 1 from louvaincommunity where milanodate=l.milanodate and alphathreshold=l.alphathreshold and edgecostfactor=l.edgecostfactor)"
-    val query = "select l.sid1, community from louvaincommunity l where milanodate='" + dateInput + "' and l.lsalphathreshold= " + alphaThreshold + "*1000 and l.edgecostfactor=" + edgeCostFactor + " and l.level = " + condition
+    val query = "select l.sid1, community from louvaincommunity l where l.milanodate='" + dateInput + "' and l.alphathreshold= " + alphaThreshold + "*1000 and l.edgecostfactor=" + edgeCostFactor + " and l.level = " + condition
     val csvOutput = hc.sql(query)
     csvOutput.coalesce(1).write.csv(csvPath)
 
