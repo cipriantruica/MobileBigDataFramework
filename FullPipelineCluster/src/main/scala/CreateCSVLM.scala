@@ -34,7 +34,7 @@ object CreateCSVLM {
     // a constant for changing the edge cost factor
     val edgeCostFactor = args(2)
     val noTest = args(3) // the test number, just for testing
-    val printFile = "./results_lhm/runtime_LMH_" + dateInput + "_test_" + noTest + "_alphaThreshold_" + alphaThreshold + "_edgeCostFactor_" + edgeCostFactor + ".txt"
+    val printFile = "./results_lhm_csv/runtime_LMH_" + dateInput + "_test_" + noTest + "_alphaThreshold_" + alphaThreshold + "_edgeCostFactor_" + edgeCostFactor + ".txt"
     val csvPath = "./results_lhm_csv/runtime_LMH_" + dateInput + "_alphaThreshold_" + alphaThreshold + "_edgeCostFactor_" + edgeCostFactor + ".csv"
 
     // Create spark configuration
@@ -59,6 +59,7 @@ object CreateCSVLM {
     val condition = "(select max(level) - 1 from louvaincommunity where milanodate=l.milanodate and alphathreshold=l.alphathreshold and edgecostfactor=l.edgecostfactor)"
     val query = "select l.sid1, community from louvaincommunity l where milanodate='" + dateInput + "' and alphathreshold= " + alphaThreshold + "*1000 and edgecostfactor=" + edgeCostFactor + " and l.level = " + condition
     val csvOutput = hc.sql(query)
+    csvOutput.show()
     csvOutput.write.csv(csvPath)
 
     val t1 = System.nanoTime()
