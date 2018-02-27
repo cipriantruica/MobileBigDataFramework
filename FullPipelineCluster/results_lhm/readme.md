@@ -1,1 +1,1 @@
-#### this foldr keeps the resuls for individual louvain modularity runs.
+this folder keeps the resuls for individual louvain modularity runs.
