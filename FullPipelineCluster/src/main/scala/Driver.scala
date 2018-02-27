@@ -38,7 +38,7 @@ object Driver {
     // drop table for testing
     // hc.sql("DROP TABLE IF EXISTS " + config.hiveSchema + "." + config.hiveOutputTable)
     // create the table if it doesn't exists
-    hc.sql("CREATE TABLE IF NOT EXISTS " + config.hiveSchema + "." + config.hiveOutputTable + "(MilanoDate date, SID1 int, community int, level int, alphaThreshold int, edgeCostFactor int)")
+    hc.sql("CREATE TABLE IF NOT EXISTS " + config.hiveSchema + "." + config.hiveOutputTable + "(MilanoDate date, SID1 int, community int, level int, alphaThreshold int, edgeCostFactor bigint)")
 
     // PrintWriter
     import java.io._
