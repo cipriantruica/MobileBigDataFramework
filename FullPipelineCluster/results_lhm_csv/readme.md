@@ -1,0 +1,1 @@
+This folder keeps the csvs with louvain comunities
