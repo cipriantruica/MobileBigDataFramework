@@ -9,10 +9,8 @@ NUM_TESTS=10
 JAR_FILE=target/scala-2.11/fullpipelinecluster_2.11-0.1.jar
 ALPHA=0.05
 ECF=1000000 #EDGE COST FACTOR
+NO_TBL=2
 
-
-for NO_TBL in `seq 1 2`
-do
   for j in `seq 1 30`
   do
       if [ "$j" -lt "10" ]
@@ -25,8 +23,8 @@ do
 
       for i in `seq 1 10`
       do
-        spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class Driver $JAR_FILE $date $ALPHA $ECF $NO_TBL $i >> "results/output_LMH_"$NO_TBL"TBL_"$date
+        spark-submit --master $MASTER --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class Driver $JAR_FILE $date $ALPHA $ECF $NO_TBL $i >> "results/output_LMH_"$NO_TBL"TBL_"$date"_"$ALPHA"_"$ECF
         sleep 10
     done;
   done;
-done;
+

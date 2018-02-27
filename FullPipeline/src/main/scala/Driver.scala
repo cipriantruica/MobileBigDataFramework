@@ -1,22 +1,37 @@
-
 import java.util.Calendar
 
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
 
+/*
+ * Copyright (C) 2018 Ciprian-Octavian Truică <ciprian.truica@cs.pub.ro>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 object Driver {
 
   def main(args: Array[String]): Unit = {
 
     // the day for wich we compute louvain modularity
-    var dateInput = "2013-11-01" //args(0)
+    var dateInput = args(0)
     // the alpha threshold filter value
-    var alphaThreshold = "0.05" //args(1)
+    var alphaThreshold = args(1)
     // a constant for changing the edge cost factor
-    var edgeCostFactor = "1000000" //args(2)
-    var noTables = 1 //args(3).toInt // use 1 for  EdgesAlpha table or 2 for Edges + LinkFiltering tables
-    var test_no = 1 //args(4) // this is just for testing
+    var edgeCostFactor = args(2)
+    var noTables = args(3).toInt // use 1 for  EdgesAlpha table or 2 for Edges + LinkFiltering tables
+    var test_no =  args(4) // this is just for testing
     val config = LouvainConfig(
       "mi2mi",
       "edges",

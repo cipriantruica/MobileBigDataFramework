@@ -434,7 +434,7 @@ class Louvain() extends Serializable {
     val alphaThreshold = config.alphaThreshold.toFloat * 1000
     val vertexRDD = graph.vertices.map(louvainVertex => {
       val (vertexId, louvainData) = louvainVertex
-      (dateInput, vertexId, louvainData.community, level, alphaThreshold.toInt, config.edgeCostFactor.toInt)
+      (dateInput, vertexId, louvainData.community, level, alphaThreshold.toInt, config.edgeCostFactor.toLong)
     })
 
     val df = hc.createDataFrame(vertexRDD) //, fileSchema)

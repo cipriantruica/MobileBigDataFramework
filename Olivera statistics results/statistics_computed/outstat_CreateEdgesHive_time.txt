@@ -1,0 +1,3 @@
+Statistics for CreatingEdges using Hive
+The mean is, 3488509.8727199
+The standard deviation is, 148473.66229128532

@@ -1,0 +1,5 @@
+Create CSV Louvain Communities
+Start time: Tue Feb 27 13:58:34 EET 2018
+End time: Tue Feb 27 13:58:47 EET 2018
+Elapsed time (ms): 13387.99091
+*************************************************

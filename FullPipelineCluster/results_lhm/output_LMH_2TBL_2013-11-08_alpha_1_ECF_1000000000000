@@ -1,0 +1,20 @@
+
+Starting Louvain level 0
+totalEdgeWeight: 769935477740886876
+  # vertices moved: 8,886
+  # vertices moved: 4,358
+  # vertices moved: 1,500
+  # vertices moved: 885
+
+Completed in 8 cycles
+qValue: 0
+
+Starting Louvain level 1
+totalEdgeWeight: 769935477740886876
+  # vertices moved: 134
+  # vertices moved: 41
+
+Completed in 4 cycles
+qValue: 0
+Louvain with Hive Test no. 1 for 2 tables with date: 2013-11-08 and alphaThreshold = 1 and edgeCostFactor =1000000000000
+Elapsed time (ms): 2577021.813323
