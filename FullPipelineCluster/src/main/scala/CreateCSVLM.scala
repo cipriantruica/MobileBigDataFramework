@@ -44,28 +44,22 @@ object CreateCSVLM {
     val sc = new SparkContext(sparkConf)
     // Create Hive context
     val hc = new HiveContext(sc)
-    // drop table if it exists
-    hc.sql("drop table if exists mi2mi.jaccardcoefficient")
 
     import java.io._
     val pw = new PrintWriter(new File(printFile))
 
-    pw.println("Jaccard Coefficient Hive")
+    pw.println("Create CSV Louvain Communities")
     pw.println("Start time: " + Calendar.getInstance().getTime())
 
     val t0 = System.nanoTime()
 
-    val edgesTbl = hc.table("mi2mi.louvaincommunity")
-    edgesTbl.createOrReplaceTempView("louvaincommunity")
+    val lc = hc.table("mi2mi.louvaincommunity")
+    lc.createOrReplaceTempView("louvaincommunity")
 
-    pw.println("Create Edges Hive")
-    pw.println("Start time: " + Calendar.getInstance().getTime())
-
-    val t0 = System.nanoTime()
     val condition = "(select max(level) - 1 from louvaincommunity where milanodate=l.milanodate and alphathreshold=l.alphathreshold and edgecostfactor=l.edgecostfactor)"
     val query = "select l.sid1, community from louvaincommunity l where milanodate='" + dateInput + "' and alphathreshold= " + alphaThreshold + "*1000 and edgecostfactor=" + edgeCostFactor + " and l.level = " + condition
-    val ties = hc.sql(query)
-    ties.write.csv(csvPath)
+    val csvOutput = hc.sql(query)
+    csvOutput.write.csv(csvPath)
 
     val t1 = System.nanoTime()
     pw.println("End time: " + Calendar.getInstance().getTime())
