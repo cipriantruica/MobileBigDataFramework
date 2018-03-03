@@ -1,0 +1,5 @@
+EM,Alpha=0.001,Alpha=0.01,Alpha=0.05
+Purity,0.055,0.052,0.048
+Entropy,0.902,0.909,0.912
+Rand Index,0.981,0.985,0.987
+Adjusted Rand Index,0.662,0.745,0.781
