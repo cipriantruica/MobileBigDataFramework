@@ -34,4 +34,4 @@ sleep 10
 spark-submit --master $MASTER --deploy-mode $MODE --num-executors $NUM_EXECS --executor-cores $NUM_CORES --executor-memory $MEM_EXECS --class Driver $JAR_FILE $DATE $ALPHA0 $ECF $NO_TBL $i >> "results/output_LMH_"$NO_TBL"TBL_"$DATE"_alpha_"$ALPHA0"_ECF_"$ECF
 sleep 10
 
-done
+done;
