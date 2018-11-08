@@ -1,0 +1,14 @@
+No Filtering
+hive -e "select community, count(sid1) no_nodes from mi2mi.louvaincommunity where level=0 and alphathreshold=1000 group by community order by community" > communities_nofiltering.csv
+
+alpha 0.001
+hive -e "select community, count(sid1) no_nodes from mi2mi.louvaincommunity where level=0 and alphathreshold=1 group by community order by community" > communities_alpha_0.001.csv
+
+alpha 0.01
+hive -e "select community, count(sid1) no_nodes from mi2mi.louvaincommunity where level=0 and alphathreshold=10 group by community order by community" > communities_alpha0.01.csv
+
+alpha 0.05
+hive -e "select community, count(sid1) no_nodes from mi2mi.louvaincommunity where level=0 and alphathreshold=50 group by community order by community" > communities_alpha0.05.csv
+
+
+hive -e "select alphathreshold/1000 alphathreshold, count(distinct community) no_communities from mi2mi.louvaincommunity where level=0 group by alphathreshold order by alphathreshold" > no_communities.csv

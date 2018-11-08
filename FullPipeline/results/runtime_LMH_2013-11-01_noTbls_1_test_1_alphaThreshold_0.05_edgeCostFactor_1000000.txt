@@ -1,0 +1,5 @@
+Louvain with Hive Test no. 1 for 1 tables with date: 2013-11-01 and alphaThreshold = 0.05 and edgeCostFactor =1000000
+Start time: Fri Feb 09 12:58:31 CET 2018
+End time: Fri Feb 09 13:01:44 CET 2018
+Elapsed time (ms): 192763.934264
+*************************************************
